@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import {Script} from "forge-std/Script.sol";
+import {Script, console} from "forge-std/Script.sol";
 import {BridgeTokenSender} from "../../src/hyperlane/learn-hyperlane/BridgeTokenSender.sol";
 
 contract BridgeTokenSenderScript is Script {
     BridgeTokenSender public bridgeTokenSender;
-    address public ARB_SEPOLIA_MAILBOX = 0x598facE78a4302f11E3de0bee1894Da0b2Cb71F8;
-    address public ARB_SEPOLIA_TOKEN_USDC = 0xEB7262b444F450178D25A5690F49bE8E2Fe5A178;
-    uint32 public ARB_SEPOLIA_DOMAIN = 421614;
+    address public ETHERLINK_TESTNET_MAILBOX = 0x58545de70CeF725c3F9623f8fAB5e53000Cd3B7D;
+    address public ETHERLINK_TESTNET_TOKEN_USDC = 0xEB7262b444F450178D25A5690F49bE8E2Fe5A178;
+    uint32 public ETHERLINK_TESTNET_DOMAIN = 128123;
     uint32 public BASE_SEPOLIA_DOMAIN = 84532;
-    address public ARB_SEPOLIA_GAS_PARAM = 0xc756cFc1b7d0d4646589EDf10eD54b201237F5e8;
+    address public ETHERLINK_TESTNET_GAS_PARAM = 0x58545de70CeF725c3F9623f8fAB5e53000Cd3B7D;
 
     //******************* Receiver Bridge *******************
     // address public BASE_SEPOLIA_RECEIVER_BRIDGE = 0xE5e77D5575c0D9BA0934825117a3AFf3f924268B;
@@ -19,7 +19,7 @@ contract BridgeTokenSenderScript is Script {
     //*******************************************************
 
     function setUp() public {
-        vm.createSelectFork(vm.rpcUrl("arb_sepolia"));
+        vm.createSelectFork(vm.rpcUrl("etherlink_testnet"));
     }
 
     function run() public {
@@ -28,18 +28,18 @@ contract BridgeTokenSenderScript is Script {
         vm.startBroadcast(privateKey);
 
         bridgeTokenSender = new BridgeTokenSender(
-            ARB_SEPOLIA_MAILBOX,
-            ARB_SEPOLIA_TOKEN_USDC,
-            BASE_SEPOLIA_DOMAIN,
+            ETHERLINK_TESTNET_MAILBOX,
+            ETHERLINK_TESTNET_TOKEN_USDC,
+            ETHERLINK_TESTNET_DOMAIN,
             BASE_SEPOLIA_RECEIVER_BRIDGE,
-            ARB_SEPOLIA_GAS_PARAM
+            ETHERLINK_TESTNET_GAS_PARAM
         );
 
-        // console.log("BridgeTokenSender deployed at", address(bridgeTokenSender));
+        console.log("BridgeTokenSender deployed at", address(bridgeTokenSender));
 
         vm.stopBroadcast();
     }
 
     // RUN
-    // forge script BridgeTokenSenderScript --rpc-url arb_sepolia --broadcast --verify -vvvv
+    // forge script BridgeTokenSenderScript --rpc-url etherlink_testnet --broadcast --verify -vvvv
 }

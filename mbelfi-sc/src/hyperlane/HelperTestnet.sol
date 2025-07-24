@@ -171,6 +171,10 @@ contract HelperTestnet {
         // LOAD
         chains[9496] =
             ChainInfo(0x589C201a07c26b4725A4A829d772f24423da480B, 0x8584590ad637C61C7cDF72eFF3381Ee1c3D1bC8E, 9496);
+
+        // ETHERLINK
+        chains[128123] =
+            ChainInfo(0x58545de70CeF725c3F9623f8fAB5e53000Cd3B7D, 0x58545de70CeF725c3F9623f8fAB5e53000Cd3B7D, 128123);
     }
 
     function addChain(address _mailbox, address _gasMaster, uint32 _domainId, uint256 _chainId) public onlyOwner {

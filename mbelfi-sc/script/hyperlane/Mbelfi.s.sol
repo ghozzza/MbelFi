@@ -35,14 +35,17 @@ contract MbelfiScript is Script {
     LendingPool public lendingPool;
     Position public position;
 
-    uint32 public chainId = 84532;
+    uint32 public receiverChainId = 84532;
+    uint32 public senderChainId = 128123;
 
+    //************** Price feed ************** (ARB)
     address public ARB_BtcUsd = 0x56a43EB56Da12C0dc1D972ACb089c06a5dEF8e69;
     address public ARB_EthUsd = 0xd30e2101a97dcbAeBCBC04F14C3f624E67A35165;
     address public ARB_AvaxUsd = 0xe27498c9Cc8541033F265E63c8C29A97CfF9aC6D;
     address public ARB_UsdcUsd = 0x0153002d20B96532C639313c2d54c3dA09109309;
     address public ARB_UsdtUsd = 0x80EDee6f667eCc9f63a0a6f55578F870651f06A4;
 
+    //************** Receiver chain **************
     address public baseHelper = 0xbd69Eab11C7B29c8A562b95DB1fB71544dD936d7;
     address public UsdcBridgeTokenReceiver = 0x754617432cb207318B8F574F473Fc26954878e29;
     address public UsdtBridgeTokenReceiver = 0x8af1CEc4b2d4ac81A7A3c7f5CaC0b7073A21867D;
@@ -58,6 +61,7 @@ contract MbelfiScript is Script {
     bool public isDeployed = false;
     address public arbHelper = isDeployed ? 0x8030dA6FBba0B33D4Ce694B19CD1e1eC50C9d916 : address(0);
 
+    //************** DEPLOYED TOKEN (ARB) **************
     address public ARB_mockUSDC = 0x902bf8CaC2222a8897d07864BEB49C291633B70E;
     address public ARB_mockUSDT = 0x2315a799b5E50b0454fbcA7237a723df4868F606;
     address public ARB_mockWAVAX = 0x0a3Fc1B5194B5564987F8062d1C9EC915B5B11d9;
@@ -78,7 +82,9 @@ contract MbelfiScript is Script {
     //   export const position =  0x616ea99db493b2200b62f13a15675954C0647C8e ;
 
     function setUp() public {
-        // host chain
+        // host chain (etherlink)
+        vm.createSelectFork(vm.rpcUrl("etherlink_testnet"));
+        // receiver chain
         vm.createSelectFork(vm.rpcUrl("arb_sepolia"));
         // vm.createSelectFork(vm.rpcUrl("base_sepolia"));
     }
@@ -91,7 +97,7 @@ contract MbelfiScript is Script {
             deployMockToken();
         }
 
-        if (block.chainid == 84532) {
+        if (block.chainid == receiverChainId) {
             console.log("export const BASE_mockWETH = ", address(mockWETH), ";");
             console.log("export const BASE_mockUSDC = ", address(mockUSDC), ";");
             console.log("export const BASE_mockUSDT = ", address(mockUSDT), ";");
@@ -148,78 +154,74 @@ contract MbelfiScript is Script {
     }
 
     function deployMockToken() public {
-        if (block.chainid == 84532) {
+        if (block.chainid == receiverChainId) {
             helperTestnet = new HelperTestnet();
             baseHelper = address(helperTestnet);
             console.log("address public baseHelper = ", baseHelper, ";");
         }
 
-        if (block.chainid == 421614) {
+        if (block.chainid == senderChainId) {
             helperTestnet = new HelperTestnet();
             arbHelper = address(helperTestnet);
             console.log("address public arbHelper = ", arbHelper, ";");
         }
 
-        if (block.chainid == 84532) {
+        if (block.chainid == receiverChainId) {
             mockUSDC = new MockUSDC(baseHelper);
             mbelfiBridgeTokenReceiver = new MbelfiBridgeTokenReceiver(baseHelper, address(mockUSDC));
             console.log("address public UsdcBridgeTokenReceiver = ", address(mbelfiBridgeTokenReceiver), ";");
         }
 
-        if (block.chainid == 421614) {
+        if (block.chainid == senderChainId) {
             mockUSDC = new MockUSDC(arbHelper);
-            pairBridgeToToken(arbHelper, address(mockUSDC), UsdcBridgeTokenReceiver, chainId);
+            pairBridgeToToken(arbHelper, address(mockUSDC), UsdcBridgeTokenReceiver, senderChainId);
             console.log("export const mockUSDC = ", address(mockUSDC), ";");
         }
 
-        if (block.chainid == 84532) {
-            chainId = uint32(block.chainid);
+        if (block.chainid == receiverChainId) {
             mockUSDT = new MockUSDT(baseHelper);
             mbelfiBridgeTokenReceiver = new MbelfiBridgeTokenReceiver(baseHelper, address(mockUSDT));
             console.log("address public UsdtBridgeTokenReceiver = ", address(mbelfiBridgeTokenReceiver), ";");
         }
 
-        if (block.chainid == 421614) {
+        if (block.chainid == senderChainId) {
             mockUSDT = new MockUSDT(arbHelper);
-            pairBridgeToToken(arbHelper, address(mockUSDT), UsdtBridgeTokenReceiver, chainId);
+            pairBridgeToToken(arbHelper, address(mockUSDT), UsdtBridgeTokenReceiver, senderChainId);
             console.log("export const mockUSDT = ", address(mockUSDT), ";");
         }
 
-        if (block.chainid == 84532) {
-            chainId = uint32(block.chainid);
+        if (block.chainid == receiverChainId) {
             mockWAVAX = new MockWAVAX(address(helperTestnet));
             mbelfiBridgeTokenReceiver = new MbelfiBridgeTokenReceiver(address(helperTestnet), address(mockWAVAX));
             console.log("address public WavaxBridgeTokenReceiver = ", address(mbelfiBridgeTokenReceiver), ";");
         }
 
-        if (block.chainid == 421614) {
+        if (block.chainid == senderChainId) {
             mockWAVAX = new MockWAVAX(address(helperTestnet));
-            pairBridgeToToken(address(helperTestnet), address(mockWAVAX), WavaxBridgeTokenReceiver, chainId);
+            pairBridgeToToken(address(helperTestnet), address(mockWAVAX), WavaxBridgeTokenReceiver, senderChainId);
             console.log("export const mockWAVAX = ", address(mockWAVAX), ";");
         }
 
-        if (block.chainid == 84532) {
-            chainId = uint32(block.chainid);
+        if (block.chainid == receiverChainId) {
             mockWBTC = new MockWBTC(baseHelper);
             mbelfiBridgeTokenReceiver = new MbelfiBridgeTokenReceiver(baseHelper, address(mockWBTC));
             console.log("address public BtcBridgeTokenReceiver = ", address(mbelfiBridgeTokenReceiver), ";");
         }
-        if (block.chainid == 421614) {
+        if (block.chainid == senderChainId) {
             mockWBTC = new MockWBTC(arbHelper);
-            pairBridgeToToken(arbHelper, address(mockWBTC), BtcBridgeTokenReceiver, chainId);
+            pairBridgeToToken(arbHelper, address(mockWBTC), BtcBridgeTokenReceiver, senderChainId);
             console.log("export const mockWBTC = ", address(mockWBTC), ";");
         }
 
-        if (block.chainid == 84532) {
-            chainId = uint32(block.chainid);
+        if (block.chainid == receiverChainId) {
             mockWETH = new MockWETH(baseHelper);
             mbelfiBridgeTokenReceiver = new MbelfiBridgeTokenReceiver(baseHelper, address(mockWETH));
             console.log("address public EthBridgeTokenReceiver = ", address(mbelfiBridgeTokenReceiver), ";");
         }
 
-        if (block.chainid == 421614) {
+        if (block.chainid == senderChainId) {
             mockWETH = new MockWETH(arbHelper);
-            pairBridgeToToken(arbHelper, address(mockWETH), EthBridgeTokenReceiver, chainId);
+            pairBridgeToToken(arbHelper, address(mockWETH), EthBridgeTokenReceiver, senderChainId);
             console.log("export const mockWETH = ", address(mockWETH), ";");
         }
     }

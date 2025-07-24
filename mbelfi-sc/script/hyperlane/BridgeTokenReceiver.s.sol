@@ -27,9 +27,6 @@ contract BridgeTokenReceiverScript is Script {
         bridgeTokenReceiver = new BridgeTokenReceiver(BASE_SEPOLIA_MAILBOX, BASE_SEPOLIA_TOKEN_USDC);
         ITokenSwap(BASE_SEPOLIA_TOKEN_USDC).grantMintAndBurnRoles(address(bridgeTokenReceiver));
 
-        // wrappedToken = new WrappedToken("Wrapped USDC", "WUSDC");
-        // bridgeTokenReceiver = new BridgeTokenReceiver(BASE_SEPOLIA_MAILBOX, address(wrappedToken));
-
         console.log("BridgeTokenReceiver deployed at", address(bridgeTokenReceiver));
 
         vm.stopBroadcast();
