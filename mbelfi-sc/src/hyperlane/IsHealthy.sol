@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {IFactory} from "./interfaces/IFactory.sol";
-import {IChainLink} from "./interfaces/IChainLink.sol";
+import {IPriceFeed} from "./interfaces/IPriceFeed.sol";
 import {IERC20Metadata} from "@openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import {IPosition} from "./interfaces/IPosition.sol";
 
@@ -64,8 +64,8 @@ contract IsHealthy {
         address borrowTokenDataStream = IFactory(factory).tokenDataStream(borrowToken);
 
         // Fetch the latest price data from Chainlink
-        (, int256 borrowPrice,,,) = IChainLink(borrowTokenDataStream).latestRoundData();
-        uint8 borrowPriceDecimals = IChainLink(borrowTokenDataStream).decimals();
+        (, int256 borrowPrice,,,) = IPriceFeed(borrowTokenDataStream).latestRoundData();
+        uint8 borrowPriceDecimals = IPriceFeed(borrowTokenDataStream).decimals();
         uint8 borrowDecimals = IERC20Metadata(borrowToken).decimals();
 
         // Calculate total collateral value from all user positions

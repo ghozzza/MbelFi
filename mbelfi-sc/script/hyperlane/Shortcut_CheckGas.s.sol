@@ -2,10 +2,7 @@
 pragma solidity ^0.8.20;
 
 import {Script, console} from "forge-std/Script.sol";
-import "forge-std/console2.sol";
 import {Helper} from "./Helper.sol";
-import {IHelperTestnet} from "../../src/hyperlane/interfaces/IHelperTestnet.sol";
-import {IFactory} from "../../src/hyperlane/interfaces/IFactory.sol";
 import {IInterchainGasPaymaster} from "@hyperlane-xyz/interfaces/IInterchainGasPaymaster.sol";
 
 contract CheckGasScript is Script, Helper {
@@ -39,22 +36,17 @@ contract CheckGasScript is Script, Helper {
     address public interchainGasPaymaster = 0xF2eeC8fD0eDE71006E7f423200e8615E48A73890;
 
     function setUp() public {
-        vm.createSelectFork(vm.rpcUrl("etherlink_testnet"));
+        // vm.createSelectFork(vm.rpcUrl("base_sepolia"));
     }
 
     function run() public {
         uint256 privateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(privateKey);
 
-        // address helperTestnet = IFactory(ARB_factory).helper();
-        // (,, uint32 destinationDomain) = IHelperTestnet(helperTestnet).chains(uint256(128123));
-        // console.log("destinationDomain", destinationDomain);
-        // (, address interchainGasPaymaster,) = IHelperTestnet(helperTestnet).chains(uint256(128123));
-        // console.log("interchainGasPaymaster", interchainGasPaymaster);
-        uint256 gasAmount = IInterchainGasPaymaster(interchainGasPaymaster).quoteGasPayment(uint32(Base_Sepolia), 1000000000000000000);
+        uint256 gasAmount = IInterchainGasPaymaster(0xb72A63Cd4148aD41F86f9d22dCe1eCEB65C811e8).quoteGasPayment(
+            uint32(Base_Sepolia), 1e6
+        );
         console.log("gasAmount", gasAmount);
-
-        // console2.logBytes32(bytes32(uint256(uint160(0xd876C01aB40e8cE42Db417fBC79c726d45504dE4))));
 
         vm.stopBroadcast();
     }
@@ -62,4 +54,6 @@ contract CheckGasScript is Script, Helper {
     // RUN
     // forge script Shortcut_CheckGasScript --rpc-url etherlink_testnet --broadcast --verify -vvvv
     // forge script CheckGasScript -vvv --broadcast
+    //1100071.500000000000000000
+    // 1100071500000
 }

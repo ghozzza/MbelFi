@@ -46,7 +46,7 @@ contract HelperTestnet {
 
         // BASE_SEPOLIA
         chains[84532] =
-            ChainInfo(0x6966b0E55883d49BFB24539356a2f8A673E02039, 0x28B02B97a850872C4D33C3E024fab6499ad96564, 84532);
+            ChainInfo(0x743Ff3d08e13aF951e4b60017Cf261BFc8457aE4, 0x677a021bdf36a7409D02A974cb6E19EE4c2F0632, 84532);
 
         // BSC_TESTNET
         chains[97] =
@@ -174,7 +174,7 @@ contract HelperTestnet {
 
         // ETHERLINK
         chains[128123] =
-            ChainInfo(0x58545de70CeF725c3F9623f8fAB5e53000Cd3B7D, 0x58545de70CeF725c3F9623f8fAB5e53000Cd3B7D, 128123);
+            ChainInfo(0xDfaa17BF52afc5a12d06964555fAAFDADD53FF5e, 0xC4c34aFF9f5dE4D9623349ce8EAc8589cE796fD7, 128123);
     }
 
     function addChain(address _mailbox, address _gasMaster, uint32 _domainId, uint256 _chainId) public onlyOwner {

@@ -5,7 +5,7 @@ import {IERC20} from "@openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
 import {IERC20Metadata} from "@openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import {SafeERC20} from "@openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 import {ReentrancyGuard} from "@openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol";
-import {IChainLink} from "./interfaces/IChainLink.sol";
+import {IPriceFeed} from "./interfaces/IPriceFeed.sol";
 import {IFactory} from "./interfaces/IFactory.sol";
 import {ITokenSwap} from "./interfaces/ITokenSwap.sol";
 
@@ -197,8 +197,8 @@ contract Position is ReentrancyGuard {
     ) public view returns (uint256) {
         uint256 tokenInDecimal = IERC20Metadata(_tokenIn).decimals();
         uint256 tokenOutDecimal = IERC20Metadata(_tokenOut).decimals();
-        (, int256 quotePrice,,,) = IChainLink(_tokenInPrice).latestRoundData();
-        (, int256 basePrice,,,) = IChainLink(_tokenOutPrice).latestRoundData();
+        (, int256 quotePrice,,,) = IPriceFeed(_tokenInPrice).latestRoundData();
+        (, int256 basePrice,,,) = IPriceFeed(_tokenOutPrice).latestRoundData();
 
         uint256 amountOut =
             (_amountIn * ((uint256(quotePrice) * (10 ** tokenOutDecimal)) / uint256(basePrice))) / 10 ** tokenInDecimal;
@@ -219,7 +219,7 @@ contract Position is ReentrancyGuard {
 
         address tokenDataStream = IFactory(factory).tokenDataStream(token);
 
-        (, int256 tokenPrice,,,) = IChainLink(tokenDataStream).latestRoundData();
+        (, int256 tokenPrice,,,) = IPriceFeed(tokenDataStream).latestRoundData();
 
         uint256 tokenAdjustedPrice = uint256(tokenPrice) * 1e18 / 1e8;
         uint256 value = (tokenBalance * tokenAdjustedPrice) / (10 ** tokenDecimals);

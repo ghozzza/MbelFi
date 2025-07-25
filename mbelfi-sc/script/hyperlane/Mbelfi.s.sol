@@ -35,195 +35,168 @@ contract MbelfiScript is Script {
     LendingPool public lendingPool;
     Position public position;
 
-    uint32 public receiverChainId = 84532;
-    uint32 public senderChainId = 128123;
+    // ****************************************************************************
+    //************** DEPLOYED TOKEN ************** (ORIGIN CHAIN)
+    address public ORIGIN_helperTestnet = address(0);
+    address public ORIGIN_mockUSDC = 0x902bf8CaC2222a8897d07864BEB49C291633B70E;
+    address public ORIGIN_mockUSDT = 0x2315a799b5E50b0454fbcA7237a723df4868F606;
+    address public ORIGIN_mockWAVAX = 0x0a3Fc1B5194B5564987F8062d1C9EC915B5B11d9;
+    address public ORIGIN_mockWBTC = 0xd642a577d77DF95bADE47F6A2329BA9d280400Ea;
+    address public ORIGIN_mockWETH = 0x8acFd502E5D1E3747C17f8c61880be64BABAE2dF;
 
-    //************** Price feed ************** (ARB)
-    address public ARB_BtcUsd = 0x56a43EB56Da12C0dc1D972ACb089c06a5dEF8e69;
-    address public ARB_EthUsd = 0xd30e2101a97dcbAeBCBC04F14C3f624E67A35165;
-    address public ARB_AvaxUsd = 0xe27498c9Cc8541033F265E63c8C29A97CfF9aC6D;
-    address public ARB_UsdcUsd = 0x0153002d20B96532C639313c2d54c3dA09109309;
-    address public ARB_UsdtUsd = 0x80EDee6f667eCc9f63a0a6f55578F870651f06A4;
+    //************** Price feed ************** (ORIGIN CHAIN)
+    address public BtcUsd = 0x56a43EB56Da12C0dc1D972ACb089c06a5dEF8e69;
+    address public EthUsd = 0xd30e2101a97dcbAeBCBC04F14C3f624E67A35165;
+    address public AvaxUsd = 0xe27498c9Cc8541033F265E63c8C29A97CfF9aC6D;
+    address public UsdcUsd = 0x0153002d20B96532C639313c2d54c3dA09109309;
+    address public UsdtUsd = 0x80EDee6f667eCc9f63a0a6f55578F870651f06A4;
+    // ****************************************************************************
+
+    uint32 public ORIGIN_chainId = 128123;
+
+    // ****************************************************************************
+    // ********** FILL THIS
+    bool public isDeployed = false;
+    uint32 public DESTINATION_chainId = 84532;
 
     //************** Receiver chain **************
-    address public baseHelper = 0xbd69Eab11C7B29c8A562b95DB1fB71544dD936d7;
     address public UsdcBridgeTokenReceiver = 0x754617432cb207318B8F574F473Fc26954878e29;
     address public UsdtBridgeTokenReceiver = 0x8af1CEc4b2d4ac81A7A3c7f5CaC0b7073A21867D;
     address public WavaxBridgeTokenReceiver = 0x16411d3f61Db8B88c7D594f5A9a0C5afa0714d62;
     address public BtcBridgeTokenReceiver = 0xa99Ee2aDC20A7298CA3a9331FbCc120175C6518e;
-    address public EthBridgeTokenReceiver = 0xfD30B5EF9FE375DD4BC9c2316f4b305a29edA220;
-    //   export const BASE_mockWETH =  0xaA456fa44e9DB055dbD470d7E756B6d9870f10a3 ;
-    //   export const BASE_mockUSDC =  0x8825408311E71cFe36D4c8f9f9d7441f793A09c7 ;
-    //   export const BASE_mockUSDT =  0x248b37ae22Bd3956919a997E17FaecA4B293e4c0 ;
-    //   export const BASE_mockWAVAX =  0x1Ed238fE25137808565070CABC9713827B52636c ;
-    //   export const BASE_mockWBTC =  0x3C095DB25f880380b0B52BDfE6045A4A5D66135F ;
-
-    bool public isDeployed = false;
-    address public arbHelper = isDeployed ? 0x8030dA6FBba0B33D4Ce694B19CD1e1eC50C9d916 : address(0);
-
-    //************** DEPLOYED TOKEN (ARB) **************
-    address public ARB_mockUSDC = 0x902bf8CaC2222a8897d07864BEB49C291633B70E;
-    address public ARB_mockUSDT = 0x2315a799b5E50b0454fbcA7237a723df4868F606;
-    address public ARB_mockWAVAX = 0x0a3Fc1B5194B5564987F8062d1C9EC915B5B11d9;
-    address public ARB_mockWBTC = 0xd642a577d77DF95bADE47F6A2329BA9d280400Ea;
-    address public ARB_mockWETH = 0x8acFd502E5D1E3747C17f8c61880be64BABAE2dF;
-
-    //   address public arbHelper =  0x8030dA6FBba0B33D4Ce694B19CD1e1eC50C9d916 ;
-    //   export const mockUSDC =  0x902bf8CaC2222a8897d07864BEB49C291633B70E ;
-    //   export const mockUSDT =  0x2315a799b5E50b0454fbcA7237a723df4868F606 ;
-    //   export const mockWAVAX =  0x0a3Fc1B5194B5564987F8062d1C9EC915B5B11d9 ;
-    //   export const mockWBTC =  0xd642a577d77DF95bADE47F6A2329BA9d280400Ea ;
-    //   export const mockWETH =  0x8acFd502E5D1E3747C17f8c61880be64BABAE2dF ;
-    //   export const protocol =  0x0c996cBCd0b81bFC20bf54e3bcCE8Ed4A39ac0Fb ;
-    //   export const isHealthy =  0x3e8915376e2afE25915BA66b45AC5df54df61F19 ;
-    //   export const lendingPoolDeployer =  0x722Ca412b27f38157e94AC5332A6D90f5aB7c5EF ;
-    //   export const lendingPoolFactory =  0xB1fa9e45fBd6668d287FcAfE7ed9f37F7F24a8Ed ;
-    //   export const lendingPool =  0x0a97cC170B77362Fd29edC650D0BFf009B7b30eD ;
-    //   export const position =  0x616ea99db493b2200b62f13a15675954C0647C8e ;
+    address public EthBridgeTokenReceiver = address(0);
+    // ****************************************************************************
 
     function setUp() public {
         // host chain (etherlink)
         vm.createSelectFork(vm.rpcUrl("etherlink_testnet"));
         // receiver chain
-        vm.createSelectFork(vm.rpcUrl("arb_sepolia"));
-        // vm.createSelectFork(vm.rpcUrl("base_sepolia"));
+        // vm.createSelectFork(vm.rpcUrl("arb_sepolia"));
+        vm.createSelectFork(vm.rpcUrl("base_sepolia"));
     }
 
     function run() public {
         uint256 privateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(privateKey);
+        if (block.chainid == DESTINATION_chainId) {
+            // ** RECEIVER AND TOKEN
+            helperTestnet = new HelperTestnet();
+            mockUSDC = new MockUSDC(address(helperTestnet));
+            mbelfiBridgeTokenReceiver = new MbelfiBridgeTokenReceiver(address(helperTestnet), address(mockUSDC));
+            console.log("address public UsdcBridgeTokenReceiver = ", address(mbelfiBridgeTokenReceiver), ";");
+            mockUSDT = new MockUSDT(address(helperTestnet));
+            mbelfiBridgeTokenReceiver = new MbelfiBridgeTokenReceiver(address(helperTestnet), address(mockUSDT));
+            console.log("address public UsdtBridgeTokenReceiver = ", address(mbelfiBridgeTokenReceiver), ";");
+            mockWAVAX = new MockWAVAX(address(helperTestnet));
+            mbelfiBridgeTokenReceiver = new MbelfiBridgeTokenReceiver(address(helperTestnet), address(mockWAVAX));
+            console.log("address public WavaxBridgeTokenReceiver = ", address(mbelfiBridgeTokenReceiver), ";");
+            mockWBTC = new MockWBTC(address(helperTestnet));
+            mbelfiBridgeTokenReceiver = new MbelfiBridgeTokenReceiver(address(helperTestnet), address(mockWBTC));
+            console.log("address public BtcBridgeTokenReceiver = ", address(mbelfiBridgeTokenReceiver), ";");
+            mockWETH = new MockWETH(address(helperTestnet));
+            mbelfiBridgeTokenReceiver = new MbelfiBridgeTokenReceiver(address(helperTestnet), address(mockWETH));
+            console.log("address public EthBridgeTokenReceiver = ", address(mbelfiBridgeTokenReceiver), ";");
 
-        if (!isDeployed) {
-            deployMockToken();
-        }
-
-        if (block.chainid == receiverChainId) {
-            console.log("export const BASE_mockWETH = ", address(mockWETH), ";");
-            console.log("export const BASE_mockUSDC = ", address(mockUSDC), ";");
-            console.log("export const BASE_mockUSDT = ", address(mockUSDT), ";");
-            console.log("export const BASE_mockWAVAX = ", address(mockWAVAX), ";");
-            console.log("export const BASE_mockWBTC = ", address(mockWBTC), ";");
-        } else {
+            // **************** SOLIDITY ****************
+            console.log("************ COPY DESTINATION ADDRESS **************");
+            console.log("address public DESTINATION_helperTestnet = ", address(helperTestnet), ";");
+            console.log("address public DESTINATION_mockUSDC = ", address(mockUSDC), ";");
+            console.log("address public DESTINATION_mockUSDT = ", address(mockUSDT), ";");
+            console.log("address public DESTINATION_mockWAVAX = ", address(mockWAVAX), ";");
+            console.log("address public DESTINATION_mockWBTC = ", address(mockWBTC), ";");
+            console.log("address public DESTINATION_mockWETH = ", address(mockWETH), ";");
+            // **************** JAVASCRIPT ****************
+            console.log("************ COPY DESTINATION ADDRESS **************");
+            console.log("export const DESTINATION_helperTestnet = ", address(helperTestnet), ";");
+            console.log("export const DESTINATION_mockWETH = ", address(mockWETH), ";");
+            console.log("export const DESTINATION_mockUSDC = ", address(mockUSDC), ";");
+            console.log("export const DESTINATION_mockUSDT = ", address(mockUSDT), ";");
+            console.log("export const DESTINATION_mockWAVAX = ", address(mockWAVAX), ";");
+            console.log("export const DESTINATION_mockWBTC = ", address(mockWBTC), ";");
+            // *************************************************
+        } else if (block.chainid == ORIGIN_chainId && !isDeployed) {
             protocol = new Protocol();
             isHealthy = new IsHealthy();
             lendingPoolDeployer = new LendingPoolDeployer();
-            if (!isDeployed) {
-                lendingPoolFactory = new LendingPoolFactory(
-                    address(isHealthy), address(lendingPoolDeployer), address(protocol), address(helperTestnet)
-                );
-            } else {
-                lendingPoolFactory = new LendingPoolFactory(
-                    address(isHealthy), address(lendingPoolDeployer), address(protocol), arbHelper
-                );
-            }
-            if (!isDeployed) {
-                lendingPool = new LendingPool(address(mockWETH), address(mockUSDC), address(lendingPoolFactory), 7e17);
-                position = new Position(
-                    address(mockWETH), address(mockUSDC), address(lendingPool), address(lendingPoolFactory)
-                );
-            } else {
-                lendingPool = new LendingPool(ARB_mockWETH, ARB_mockUSDC, address(lendingPoolFactory), 7e17);
-                position = new Position(ARB_mockWETH, ARB_mockUSDC, address(lendingPool), address(lendingPoolFactory));
-            }
+            helperTestnet = new HelperTestnet();
+
+            // **************** DEPLOY TOKEN ******************
+            deployMockToken();
+            // *************************************************
+
+            lendingPoolFactory = new LendingPoolFactory(
+                address(isHealthy), address(lendingPoolDeployer), address(protocol), address(helperTestnet)
+            );
+
+            lendingPool = new LendingPool(address(mockWETH), address(mockUSDC), address(lendingPoolFactory), 7e17);
+            position =
+                new Position(address(mockWETH), address(mockUSDC), address(lendingPool), address(lendingPoolFactory));
 
             lendingPoolDeployer.setFactory(address(lendingPoolFactory));
 
-            if (!isDeployed) {
-                lendingPoolFactory.addTokenDataStream(address(mockWETH), ARB_EthUsd);
-                lendingPoolFactory.addTokenDataStream(address(mockWBTC), ARB_BtcUsd);
-                lendingPoolFactory.addTokenDataStream(address(mockWAVAX), ARB_AvaxUsd);
-                lendingPoolFactory.addTokenDataStream(address(mockUSDC), ARB_UsdcUsd);
-                lendingPoolFactory.addTokenDataStream(address(mockUSDT), ARB_UsdtUsd);
-            } else {
-                lendingPoolFactory.addTokenDataStream(ARB_mockWETH, ARB_EthUsd);
-                lendingPoolFactory.addTokenDataStream(ARB_mockWBTC, ARB_BtcUsd);
-                lendingPoolFactory.addTokenDataStream(ARB_mockWAVAX, ARB_AvaxUsd);
-                lendingPoolFactory.addTokenDataStream(ARB_mockUSDC, ARB_UsdcUsd);
-                lendingPoolFactory.addTokenDataStream(ARB_mockUSDT, ARB_UsdtUsd);
-            }
-
+            lendingPoolFactory.addTokenDataStream(address(mockWETH), EthUsd);
+            lendingPoolFactory.addTokenDataStream(address(mockWBTC), BtcUsd);
+            lendingPoolFactory.addTokenDataStream(address(mockWAVAX), AvaxUsd);
+            lendingPoolFactory.addTokenDataStream(address(mockUSDC), UsdcUsd);
+            lendingPoolFactory.addTokenDataStream(address(mockUSDT), UsdtUsd);
+            // **************** SOLIDITY ****************
+            console.log("************ COPY ORIGIN ADDRESS **************");
+            console.log("address public protocol = ", address(protocol), ";");
+            console.log("address public isHealthy = ", address(isHealthy), ";");
+            console.log("address public lendingPoolDeployer = ", address(lendingPoolDeployer), ";");
+            console.log("address public lendingPoolFactory = ", address(lendingPoolFactory), ";");
+            console.log("address public lendingPool = ", address(lendingPool), ";");
+            console.log("address public position = ", address(position), ";");
+            // **************** JAVASCRIPT ****************
+            console.log("************ COPY ORIGIN ADDRESS **************");
             console.log("export const protocol = ", address(protocol), ";");
             console.log("export const isHealthy = ", address(isHealthy), ";");
             console.log("export const lendingPoolDeployer = ", address(lendingPoolDeployer), ";");
             console.log("export const lendingPoolFactory = ", address(lendingPoolFactory), ";");
             console.log("export const lendingPool = ", address(lendingPool), ";");
             console.log("export const position = ", address(position), ";");
+        } else if (block.chainid == ORIGIN_chainId && isDeployed) {
+            pairBridgeToToken(ORIGIN_helperTestnet, ORIGIN_mockUSDC, UsdcBridgeTokenReceiver, DESTINATION_chainId);
+            pairBridgeToToken(ORIGIN_helperTestnet, ORIGIN_mockUSDT, UsdtBridgeTokenReceiver, DESTINATION_chainId);
+            pairBridgeToToken(ORIGIN_helperTestnet, ORIGIN_mockWAVAX, WavaxBridgeTokenReceiver, DESTINATION_chainId);
+            pairBridgeToToken(ORIGIN_helperTestnet, ORIGIN_mockWBTC, BtcBridgeTokenReceiver, DESTINATION_chainId);
+            pairBridgeToToken(ORIGIN_helperTestnet, ORIGIN_mockWETH, EthBridgeTokenReceiver, DESTINATION_chainId);
         }
 
         vm.stopBroadcast();
     }
 
     function deployMockToken() public {
-        if (block.chainid == receiverChainId) {
-            helperTestnet = new HelperTestnet();
-            baseHelper = address(helperTestnet);
-            console.log("address public baseHelper = ", baseHelper, ";");
-        }
+        mockUSDC = new MockUSDC(address(helperTestnet));
+        pairBridgeToToken(address(helperTestnet), address(mockUSDC), UsdcBridgeTokenReceiver, DESTINATION_chainId);
 
-        if (block.chainid == senderChainId) {
-            helperTestnet = new HelperTestnet();
-            arbHelper = address(helperTestnet);
-            console.log("address public arbHelper = ", arbHelper, ";");
-        }
+        mockUSDT = new MockUSDT(address(helperTestnet));
+        pairBridgeToToken(address(helperTestnet), address(mockUSDT), UsdtBridgeTokenReceiver, DESTINATION_chainId);
 
-        if (block.chainid == receiverChainId) {
-            mockUSDC = new MockUSDC(baseHelper);
-            mbelfiBridgeTokenReceiver = new MbelfiBridgeTokenReceiver(baseHelper, address(mockUSDC));
-            console.log("address public UsdcBridgeTokenReceiver = ", address(mbelfiBridgeTokenReceiver), ";");
-        }
+        mockWAVAX = new MockWAVAX(address(helperTestnet));
+        pairBridgeToToken(address(helperTestnet), address(mockWAVAX), WavaxBridgeTokenReceiver, DESTINATION_chainId);
 
-        if (block.chainid == senderChainId) {
-            mockUSDC = new MockUSDC(arbHelper);
-            pairBridgeToToken(arbHelper, address(mockUSDC), UsdcBridgeTokenReceiver, senderChainId);
-            console.log("export const mockUSDC = ", address(mockUSDC), ";");
-        }
+        mockWBTC = new MockWBTC(address(helperTestnet));
+        pairBridgeToToken(address(helperTestnet), address(mockWBTC), BtcBridgeTokenReceiver, DESTINATION_chainId);
 
-        if (block.chainid == receiverChainId) {
-            mockUSDT = new MockUSDT(baseHelper);
-            mbelfiBridgeTokenReceiver = new MbelfiBridgeTokenReceiver(baseHelper, address(mockUSDT));
-            console.log("address public UsdtBridgeTokenReceiver = ", address(mbelfiBridgeTokenReceiver), ";");
-        }
-
-        if (block.chainid == senderChainId) {
-            mockUSDT = new MockUSDT(arbHelper);
-            pairBridgeToToken(arbHelper, address(mockUSDT), UsdtBridgeTokenReceiver, senderChainId);
-            console.log("export const mockUSDT = ", address(mockUSDT), ";");
-        }
-
-        if (block.chainid == receiverChainId) {
-            mockWAVAX = new MockWAVAX(address(helperTestnet));
-            mbelfiBridgeTokenReceiver = new MbelfiBridgeTokenReceiver(address(helperTestnet), address(mockWAVAX));
-            console.log("address public WavaxBridgeTokenReceiver = ", address(mbelfiBridgeTokenReceiver), ";");
-        }
-
-        if (block.chainid == senderChainId) {
-            mockWAVAX = new MockWAVAX(address(helperTestnet));
-            pairBridgeToToken(address(helperTestnet), address(mockWAVAX), WavaxBridgeTokenReceiver, senderChainId);
-            console.log("export const mockWAVAX = ", address(mockWAVAX), ";");
-        }
-
-        if (block.chainid == receiverChainId) {
-            mockWBTC = new MockWBTC(baseHelper);
-            mbelfiBridgeTokenReceiver = new MbelfiBridgeTokenReceiver(baseHelper, address(mockWBTC));
-            console.log("address public BtcBridgeTokenReceiver = ", address(mbelfiBridgeTokenReceiver), ";");
-        }
-        if (block.chainid == senderChainId) {
-            mockWBTC = new MockWBTC(arbHelper);
-            pairBridgeToToken(arbHelper, address(mockWBTC), BtcBridgeTokenReceiver, senderChainId);
-            console.log("export const mockWBTC = ", address(mockWBTC), ";");
-        }
-
-        if (block.chainid == receiverChainId) {
-            mockWETH = new MockWETH(baseHelper);
-            mbelfiBridgeTokenReceiver = new MbelfiBridgeTokenReceiver(baseHelper, address(mockWETH));
-            console.log("address public EthBridgeTokenReceiver = ", address(mbelfiBridgeTokenReceiver), ";");
-        }
-
-        if (block.chainid == senderChainId) {
-            mockWETH = new MockWETH(arbHelper);
-            pairBridgeToToken(arbHelper, address(mockWETH), EthBridgeTokenReceiver, senderChainId);
-            console.log("export const mockWETH = ", address(mockWETH), ";");
-        }
+        mockWETH = new MockWETH(address(helperTestnet));
+        pairBridgeToToken(address(helperTestnet), address(mockWETH), EthBridgeTokenReceiver, DESTINATION_chainId);
+        // **************** SOLIDITY ****************
+        console.log("************ COPY DESTINATION ADDRESS **************");
+        console.log("address public ORIGIN_helperTestnet = ", address(helperTestnet), ";");
+        console.log("address public ORIGIN_mockUSDC = ", address(mockUSDC), ";");
+        console.log("address public ORIGIN_mockUSDT = ", address(mockUSDT), ";");
+        console.log("address public ORIGIN_mockWAVAX = ", address(mockWAVAX), ";");
+        console.log("address public ORIGIN_mockWBTC = ", address(mockWBTC), ";");
+        console.log("address public ORIGIN_mockWETH = ", address(mockWETH), ";");
+        // **************** JAVASCRIPT ****************
+        console.log("************ COPY ORIGIN ADDRESS **************");
+        console.log("export const ORIGIN_helperTestnet = ", address(helperTestnet), ";");
+        console.log("export const ORIGIN_mockUSDC = ", address(mockUSDC), ";");
+        console.log("export const ORIGIN_mockUSDT = ", address(mockUSDT), ";");
+        console.log("export const ORIGIN_mockWAVAX = ", address(mockWAVAX), ";");
+        console.log("export const ORIGIN_mockWBTC = ", address(mockWBTC), ";");
+        console.log("export const ORIGIN_mockWETH = ", address(mockWETH), ";");
     }
 
     function pairBridgeToToken(
@@ -246,5 +219,5 @@ contract MbelfiScript is Script {
 
     // Deploy token other chain
     // deploy receiver other chain
-    // Pair bridge source chain
+    // Pair bridge oRIGIN chain
 }
