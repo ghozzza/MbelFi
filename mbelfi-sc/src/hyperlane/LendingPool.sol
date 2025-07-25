@@ -66,14 +66,6 @@ contract LendingPool is ReentrancyGuard {
     }
 
     /**
-     *     _________    __________
-     *    / ____/   |  / ____/ __ \
-     *   / /   / /| | / __/ / /_/ /
-     *  / /___/ ___ |/ /___/ _, _/
-     *  \____/_/  |_/_____/_/ |_|
-     */
-
-    /**
      * @notice Creates a new Position contract for the caller if one does not already exist.
      * @dev Each user can have only one Position contract. The Position contract manages collateral and borrowed assets for the user.
      * @custom:throws PositionAlreadyCreated if the caller already has a Position contract.
