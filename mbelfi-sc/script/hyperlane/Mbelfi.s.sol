@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 import {Script, console} from "forge-std/Script.sol";
 import {MockUSDC} from "../../src/hyperlane/mocks/MockUSDC.sol";
 import {MockUSDT} from "../../src/hyperlane/mocks/MockUSDT.sol";
-import {MockWAVAX} from "../../src/hyperlane/mocks/MockWAVAX.sol";
+import {MockWXTZ} from "../../src/hyperlane/mocks/MockWXTZ.sol";
 import {HelperTestnet} from "../../src/hyperlane/HelperTestnet.sol";
 import {MbelfiBridgeTokenSender} from "../../src/hyperlane/MbelfiBridgeTokenSender.sol";
 import {MbelfiBridgeTokenReceiver} from "../../src/hyperlane/MbelfiBridgeTokenReceiver.sol";
@@ -17,6 +17,7 @@ import {LendingPoolDeployer} from "../../src/hyperlane/LendingPoolDeployer.sol";
 import {LendingPoolFactory} from "../../src/hyperlane/LendingPoolFactory.sol";
 import {LendingPool} from "../../src/hyperlane/LendingPool.sol";
 import {Position} from "../../src/hyperlane/Position.sol";
+import {Pricefeed} from "../../src/hyperlane/Pricefeed.sol";
 
 contract MbelfiScript is Script {
     HelperTestnet public helperTestnet;
@@ -24,7 +25,7 @@ contract MbelfiScript is Script {
     MbelfiBridgeTokenSender public mbelfiBridgeTokenSender;
     MockUSDC public mockUSDC;
     MockUSDT public mockUSDT;
-    MockWAVAX public mockWAVAX;
+    MockWXTZ public mockWXTZ;
     MockWBTC public mockWBTC;
     MockWETH public mockWETH;
 
@@ -34,22 +35,21 @@ contract MbelfiScript is Script {
     LendingPoolFactory public lendingPoolFactory;
     LendingPool public lendingPool;
     Position public position;
+    Pricefeed public pricefeed;
 
     // ****************************************************************************
     //************** DEPLOYED TOKEN ************** (ORIGIN CHAIN)
-    address public ORIGIN_helperTestnet = address(0);
-    address public ORIGIN_mockUSDC = 0x902bf8CaC2222a8897d07864BEB49C291633B70E;
-    address public ORIGIN_mockUSDT = 0x2315a799b5E50b0454fbcA7237a723df4868F606;
-    address public ORIGIN_mockWAVAX = 0x0a3Fc1B5194B5564987F8062d1C9EC915B5B11d9;
-    address public ORIGIN_mockWBTC = 0xd642a577d77DF95bADE47F6A2329BA9d280400Ea;
-    address public ORIGIN_mockWETH = 0x8acFd502E5D1E3747C17f8c61880be64BABAE2dF;
+    address public ORIGIN_helperTestnet = 0xc5144c5Aa664F693f6583261a2ce85beb6259bB8;
+    address public ORIGIN_mockUSDC = 0x5410E294CBF68B0C1B8e6B65C908E3e0cC79292B;
+    address public ORIGIN_mockUSDT = 0xf31c4694B4a643151aaF8487bE1aC542E19b1d0f;
+    address public ORIGIN_mockWXTZ = 0xC5d0A0e61A64CeF4e466239c0c8237308D2a47A8;
+    address public ORIGIN_mockWBTC = 0x757346A8e145045189aC4AD0F4D73776E5eD3324;
+    address public ORIGIN_mockWETH = 0xd23bB8F4A3541DaC762b139Cd7328376A0cd8288;
 
     //************** Price feed ************** (ORIGIN CHAIN)
-    address public BtcUsd = 0x56a43EB56Da12C0dc1D972ACb089c06a5dEF8e69;
-    address public EthUsd = 0xd30e2101a97dcbAeBCBC04F14C3f624E67A35165;
-    address public AvaxUsd = 0xe27498c9Cc8541033F265E63c8C29A97CfF9aC6D;
-    address public UsdcUsd = 0x0153002d20B96532C639313c2d54c3dA09109309;
-    address public UsdtUsd = 0x80EDee6f667eCc9f63a0a6f55578F870651f06A4;
+    address public BtcUsd = 0xfe66A25096128f57D3876D42cD2B4347a77784c2;
+    address public EthUsd = 0xb31D94df41ccc22b46fd2Ae4eA2a6D6eB9c23bfb;
+    address public XtzUsd = 0xE06FE39f066562DBfE390167AE49D8Cb66e1F887;
     // ****************************************************************************
 
     uint32 public ORIGIN_chainId = 128123;
@@ -60,11 +60,18 @@ contract MbelfiScript is Script {
     uint32 public DESTINATION_chainId = 84532;
 
     //************** Receiver chain **************
-    address public UsdcBridgeTokenReceiver = 0x754617432cb207318B8F574F473Fc26954878e29;
-    address public UsdtBridgeTokenReceiver = 0x8af1CEc4b2d4ac81A7A3c7f5CaC0b7073A21867D;
-    address public WavaxBridgeTokenReceiver = 0x16411d3f61Db8B88c7D594f5A9a0C5afa0714d62;
-    address public BtcBridgeTokenReceiver = 0xa99Ee2aDC20A7298CA3a9331FbCc120175C6518e;
-    address public EthBridgeTokenReceiver = address(0);
+    address public UsdcBridgeTokenReceiver = 0x4F10564D41097e0Ae49b073cd7Fb689c74e0F81b;
+    address public UsdtBridgeTokenReceiver = 0xaaD746aBb9Cd39D745212B80702aFc6e911F3543;
+    address public WxtzBridgeTokenReceiver = 0x8dF619bcd1A9F4D33fF283a165F1eEFFE69dF1D4;
+    address public BtcBridgeTokenReceiver = 0x246706f939Ee1c50754A060Ec80fD52Ea79022Cc;
+    address public EthBridgeTokenReceiver = 0x8BDa1a549676B056A84b37F17739614b2F41Dd02;
+
+    // address public DESTINATION_helperTestnet = 0xd579D691CEa9F6999CE652c5827E38E6B7B8FEDd;
+    // address public DESTINATION_mockUSDC = 0xdfd290562Ce8aB4A4CCBfF3FC459D504a628f8eD;
+    // address public DESTINATION_mockUSDT = 0xF597525130e6295CFA0C75EA968FBf89D486c528;
+    // address public DESTINATION_mockWXTZ = 0x10d3743F6A987082CB7B0680cA2283F5839e77CD;
+    // address public DESTINATION_mockWBTC = 0x11603bf689910b9312bd0915749095C12cc92ac1;
+    // address public DESTINATION_mockWETH = 0x9A2Da2FA519AFCcCc6B33CA48dFa07fE3a9887eF;
     // ****************************************************************************
 
     function setUp() public {
@@ -72,7 +79,7 @@ contract MbelfiScript is Script {
         vm.createSelectFork(vm.rpcUrl("etherlink_testnet"));
         // receiver chain
         // vm.createSelectFork(vm.rpcUrl("arb_sepolia"));
-        vm.createSelectFork(vm.rpcUrl("base_sepolia"));
+        // vm.createSelectFork(vm.rpcUrl("base_sepolia"));
     }
 
     function run() public {
@@ -87,9 +94,9 @@ contract MbelfiScript is Script {
             mockUSDT = new MockUSDT(address(helperTestnet));
             mbelfiBridgeTokenReceiver = new MbelfiBridgeTokenReceiver(address(helperTestnet), address(mockUSDT));
             console.log("address public UsdtBridgeTokenReceiver = ", address(mbelfiBridgeTokenReceiver), ";");
-            mockWAVAX = new MockWAVAX(address(helperTestnet));
-            mbelfiBridgeTokenReceiver = new MbelfiBridgeTokenReceiver(address(helperTestnet), address(mockWAVAX));
-            console.log("address public WavaxBridgeTokenReceiver = ", address(mbelfiBridgeTokenReceiver), ";");
+            mockWXTZ = new MockWXTZ(address(helperTestnet));
+            mbelfiBridgeTokenReceiver = new MbelfiBridgeTokenReceiver(address(helperTestnet), address(mockWXTZ));
+            console.log("address public WxtzBridgeTokenReceiver = ", address(mbelfiBridgeTokenReceiver), ";");
             mockWBTC = new MockWBTC(address(helperTestnet));
             mbelfiBridgeTokenReceiver = new MbelfiBridgeTokenReceiver(address(helperTestnet), address(mockWBTC));
             console.log("address public BtcBridgeTokenReceiver = ", address(mbelfiBridgeTokenReceiver), ";");
@@ -102,7 +109,7 @@ contract MbelfiScript is Script {
             console.log("address public DESTINATION_helperTestnet = ", address(helperTestnet), ";");
             console.log("address public DESTINATION_mockUSDC = ", address(mockUSDC), ";");
             console.log("address public DESTINATION_mockUSDT = ", address(mockUSDT), ";");
-            console.log("address public DESTINATION_mockWAVAX = ", address(mockWAVAX), ";");
+            console.log("address public DESTINATION_mockWXTZ = ", address(mockWXTZ), ";");
             console.log("address public DESTINATION_mockWBTC = ", address(mockWBTC), ";");
             console.log("address public DESTINATION_mockWETH = ", address(mockWETH), ";");
             // **************** JAVASCRIPT ****************
@@ -111,34 +118,45 @@ contract MbelfiScript is Script {
             console.log("export const DESTINATION_mockWETH = ", address(mockWETH), ";");
             console.log("export const DESTINATION_mockUSDC = ", address(mockUSDC), ";");
             console.log("export const DESTINATION_mockUSDT = ", address(mockUSDT), ";");
-            console.log("export const DESTINATION_mockWAVAX = ", address(mockWAVAX), ";");
+            console.log("export const DESTINATION_mockWXTZ = ", address(mockWXTZ), ";");
             console.log("export const DESTINATION_mockWBTC = ", address(mockWBTC), ";");
             // *************************************************
         } else if (block.chainid == ORIGIN_chainId && !isDeployed) {
+            // **************** DEPLOY PROTOCOL ******************
             protocol = new Protocol();
             isHealthy = new IsHealthy();
             lendingPoolDeployer = new LendingPoolDeployer();
             helperTestnet = new HelperTestnet();
+            // *************************************************
 
             // **************** DEPLOY TOKEN ******************
             deployMockToken();
             // *************************************************
 
+            // **************** CORE CONTRACT ******************
             lendingPoolFactory = new LendingPoolFactory(
                 address(isHealthy), address(lendingPoolDeployer), address(protocol), address(helperTestnet)
             );
-
             lendingPool = new LendingPool(address(mockWETH), address(mockUSDC), address(lendingPoolFactory), 7e17);
             position =
                 new Position(address(mockWETH), address(mockUSDC), address(lendingPool), address(lendingPoolFactory));
-
             lendingPoolDeployer.setFactory(address(lendingPoolFactory));
+            // *************************************************
+
+            // **************** PRICE FEED ******************
+            pricefeed = new Pricefeed(address(mockUSDC));
+            pricefeed.setPrice(1e8);
+            lendingPoolFactory.addTokenDataStream(address(mockUSDC), address(pricefeed));
+
+            pricefeed = new Pricefeed(address(mockUSDT));
+            pricefeed.setPrice(1e8);
+            lendingPoolFactory.addTokenDataStream(address(mockUSDT), address(pricefeed));
 
             lendingPoolFactory.addTokenDataStream(address(mockWETH), EthUsd);
             lendingPoolFactory.addTokenDataStream(address(mockWBTC), BtcUsd);
-            lendingPoolFactory.addTokenDataStream(address(mockWAVAX), AvaxUsd);
-            lendingPoolFactory.addTokenDataStream(address(mockUSDC), UsdcUsd);
-            lendingPoolFactory.addTokenDataStream(address(mockUSDT), UsdtUsd);
+            lendingPoolFactory.addTokenDataStream(address(mockWXTZ), XtzUsd);
+            // *************************************************
+
             // **************** SOLIDITY ****************
             console.log("************ COPY ORIGIN ADDRESS **************");
             console.log("address public protocol = ", address(protocol), ";");
@@ -156,9 +174,11 @@ contract MbelfiScript is Script {
             console.log("export const lendingPool = ", address(lendingPool), ";");
             console.log("export const position = ", address(position), ";");
         } else if (block.chainid == ORIGIN_chainId && isDeployed) {
+            ///* 1.DEPLOY HYPERLANE TO DESTINATION CHAIN
+            ///* 2.DEPLOY RECEIVER
             pairBridgeToToken(ORIGIN_helperTestnet, ORIGIN_mockUSDC, UsdcBridgeTokenReceiver, DESTINATION_chainId);
             pairBridgeToToken(ORIGIN_helperTestnet, ORIGIN_mockUSDT, UsdtBridgeTokenReceiver, DESTINATION_chainId);
-            pairBridgeToToken(ORIGIN_helperTestnet, ORIGIN_mockWAVAX, WavaxBridgeTokenReceiver, DESTINATION_chainId);
+            pairBridgeToToken(ORIGIN_helperTestnet, ORIGIN_mockWXTZ, WxtzBridgeTokenReceiver, DESTINATION_chainId);
             pairBridgeToToken(ORIGIN_helperTestnet, ORIGIN_mockWBTC, BtcBridgeTokenReceiver, DESTINATION_chainId);
             pairBridgeToToken(ORIGIN_helperTestnet, ORIGIN_mockWETH, EthBridgeTokenReceiver, DESTINATION_chainId);
         }
@@ -167,26 +187,31 @@ contract MbelfiScript is Script {
     }
 
     function deployMockToken() public {
+        if (UsdcBridgeTokenReceiver == address(0)) revert("UsdcBridgeTokenReceiver is not set");
         mockUSDC = new MockUSDC(address(helperTestnet));
         pairBridgeToToken(address(helperTestnet), address(mockUSDC), UsdcBridgeTokenReceiver, DESTINATION_chainId);
 
+        if (UsdtBridgeTokenReceiver == address(0)) revert("UsdtBridgeTokenReceiver is not set");
         mockUSDT = new MockUSDT(address(helperTestnet));
         pairBridgeToToken(address(helperTestnet), address(mockUSDT), UsdtBridgeTokenReceiver, DESTINATION_chainId);
 
-        mockWAVAX = new MockWAVAX(address(helperTestnet));
-        pairBridgeToToken(address(helperTestnet), address(mockWAVAX), WavaxBridgeTokenReceiver, DESTINATION_chainId);
+        if (WxtzBridgeTokenReceiver == address(0)) revert("WxtzBridgeTokenReceiver is not set");
+        mockWXTZ = new MockWXTZ(address(helperTestnet));
+        pairBridgeToToken(address(helperTestnet), address(mockWXTZ), WxtzBridgeTokenReceiver, DESTINATION_chainId);
 
+        if (BtcBridgeTokenReceiver == address(0)) revert("BtcBridgeTokenReceiver is not set");
         mockWBTC = new MockWBTC(address(helperTestnet));
         pairBridgeToToken(address(helperTestnet), address(mockWBTC), BtcBridgeTokenReceiver, DESTINATION_chainId);
 
+        if (EthBridgeTokenReceiver == address(0)) revert("EthBridgeTokenReceiver is not set");
         mockWETH = new MockWETH(address(helperTestnet));
         pairBridgeToToken(address(helperTestnet), address(mockWETH), EthBridgeTokenReceiver, DESTINATION_chainId);
         // **************** SOLIDITY ****************
-        console.log("************ COPY DESTINATION ADDRESS **************");
+        console.log("************ COPY ORIGIN ADDRESS **************");
         console.log("address public ORIGIN_helperTestnet = ", address(helperTestnet), ";");
         console.log("address public ORIGIN_mockUSDC = ", address(mockUSDC), ";");
         console.log("address public ORIGIN_mockUSDT = ", address(mockUSDT), ";");
-        console.log("address public ORIGIN_mockWAVAX = ", address(mockWAVAX), ";");
+        console.log("address public ORIGIN_mockWXTZ = ", address(mockWXTZ), ";");
         console.log("address public ORIGIN_mockWBTC = ", address(mockWBTC), ";");
         console.log("address public ORIGIN_mockWETH = ", address(mockWETH), ";");
         // **************** JAVASCRIPT ****************
@@ -194,7 +219,7 @@ contract MbelfiScript is Script {
         console.log("export const ORIGIN_helperTestnet = ", address(helperTestnet), ";");
         console.log("export const ORIGIN_mockUSDC = ", address(mockUSDC), ";");
         console.log("export const ORIGIN_mockUSDT = ", address(mockUSDT), ";");
-        console.log("export const ORIGIN_mockWAVAX = ", address(mockWAVAX), ";");
+        console.log("export const ORIGIN_mockWXTZ = ", address(mockWXTZ), ";");
         console.log("export const ORIGIN_mockWBTC = ", address(mockWBTC), ";");
         console.log("export const ORIGIN_mockWETH = ", address(mockWETH), ";");
     }
@@ -216,8 +241,4 @@ contract MbelfiScript is Script {
 
     // RUN
     // forge script MbelfiScript --broadcast --verify
-
-    // Deploy token other chain
-    // deploy receiver other chain
-    // Pair bridge oRIGIN chain
 }

@@ -1,23 +1,38 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.24;
 
-import {BurnMintERC677} from "@chainlink-evm/contracts/src/v0.8/shared/token/ERC677/BurnMintERC677.sol";
-import {IGetCCIPAdmin} from "@chainlink-ccip/chains/evm/contracts/interfaces/IGetCCIPAdmin.sol";
 import {IMbelfiBridgeTokenSender} from "../interfaces/IMbelfiBridgeTokenSender.sol";
+import {ERC20} from "@openzeppelin-contracts/contracts/token/ERC20/ERC20.sol";
 
-contract MockWAVAX is BurnMintERC677, IGetCCIPAdmin {
+contract MockWXTZ is ERC20 {
     error InvalidChainId();
+    error NotOwner();
 
+    address public owner;
     address public helperTestnet;
     mapping(uint256 => address[]) public bridgeTokenSenders;
 
     event BridgeTokenSenderAdded(address indexed bridgeTokenSender, uint256 indexed chainId);
 
-    constructor(address _helperTestnet) BurnMintERC677("Wrapped Avalanche", "WAVAX", 18, 0) {
+    constructor(address _helperTestnet) ERC20("Wrapped Tezos", "WXTZ") {
         helperTestnet = _helperTestnet;
+        owner = msg.sender;
+    }
+
+    modifier onlyOwner() {
+        if (msg.sender != owner) revert NotOwner();
+        _;
     }
 
     // this function for hackathon purposes
+    function mint(address to, uint256 amount) public {
+        _mint(to, amount);
+    }
+
+    function burn(uint256 amount) public {
+        _burn(msg.sender, amount);
+    }
+
     function mintMock(address to, uint256 amount) public {
         _mint(to, amount);
     }
@@ -26,8 +41,8 @@ contract MockWAVAX is BurnMintERC677, IGetCCIPAdmin {
         _burn(msg.sender, amount);
     }
 
-    function getCCIPAdmin() external view override returns (address) {
-        return owner();
+    function decimals() public pure override returns (uint8) {
+        return 18;
     }
 
     function addBridgeTokenSender(address _bridgeTokenSender) public onlyOwner {

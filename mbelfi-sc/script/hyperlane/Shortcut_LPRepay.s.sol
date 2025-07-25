@@ -14,23 +14,26 @@ contract LPRepayScript is Script, Helper {
     // ----------------------------
 
     function setUp() public {
-        vm.createSelectFork(vm.rpcUrl("arb_sepolia"));
+        // ***************** HOST CHAIN *****************
+        vm.createSelectFork(vm.rpcUrl("etherlink_testnet"));
+        // **********************************************
+        // vm.createSelectFork(vm.rpcUrl("arb_sepolia"));
         // vm.createSelectFork(vm.rpcUrl("avalanche_fuji"));
     }
 
     function run() public {
         uint256 privateKey = vm.envUint("PRIVATE_KEY");
-        address borrowToken = ILendingPool(ARB_lp).borrowToken();
+        address borrowToken = ILendingPool(ORIGIN_lendingPool).borrowToken();
         uint256 decimals = 10 ** IERC20Metadata(borrowToken).decimals();
         uint256 amountToPay = amount * decimals;
-        uint256 debtBefore = ILendingPool(ARB_lp).userBorrowShares(yourWallet);
+        uint256 debtBefore = ILendingPool(ORIGIN_lendingPool).userBorrowShares(yourWallet);
         console.log("debtBefore", debtBefore);
         vm.startBroadcast(privateKey);
         // approve
-        uint256 shares = ((amountToPay * ILendingPool(ARB_lp).totalBorrowShares()) / ILendingPool(ARB_lp).totalBorrowAssets());
-        IERC20(borrowToken).approve(ARB_lp, amountToPay + 1e6);
-        ILendingPool(ARB_lp).repayWithSelectedToken(shares, address(ARB_USDC), false);
-        uint256 debtAfter = ILendingPool(ARB_lp).userBorrowShares(yourWallet);
+        uint256 shares = ((amountToPay * ILendingPool(ORIGIN_lendingPool).totalBorrowShares()) / ILendingPool(ORIGIN_lendingPool).totalBorrowAssets());
+        IERC20(borrowToken).approve(ORIGIN_lendingPool, amountToPay + 1e6);
+        ILendingPool(ORIGIN_lendingPool).repayWithSelectedToken(shares, address(ORIGIN_USDC), false);
+        uint256 debtAfter = ILendingPool(ORIGIN_lendingPool).userBorrowShares(yourWallet);
         console.log("-------------------------------- repay --------------------------------");
         console.log("debtAfter", debtAfter);
         vm.stopBroadcast();

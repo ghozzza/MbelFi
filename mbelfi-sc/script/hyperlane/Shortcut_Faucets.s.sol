@@ -8,14 +8,18 @@ import {ITokenSwap} from "../../src/hyperlane/interfaces/ITokenSwap.sol";
 
 contract FaucetsScript is Script, Helper {
     // ------- FILL THIS ----------
-    address public claimToken = ARB_USDC;
-    uint256 public amount = 10_000;
+    address public claimToken = ORIGIN_WETH;
+    uint256 public amount = 10;
     // ----------------------------
 
     function setUp() public {
+        // ***************** HOST CHAIN *****************
+        vm.createSelectFork(vm.rpcUrl("etherlink_testnet"));
+        // **********************************************
+
         // vm.createSelectFork(vm.rpcUrl("rise_sepolia"));
         // vm.createSelectFork(vm.rpcUrl("op_sepolia"));
-        vm.createSelectFork(vm.rpcUrl("arb_sepolia"));
+        // vm.createSelectFork(vm.rpcUrl("arb_sepolia"));
         // vm.createSelectFork(vm.rpcUrl("avalanche_fuji"));
         // vm.createSelectFork(vm.rpcUrl("cachain_sepolia"));
         // vm.createSelectFork(vm.rpcUrl("educhain"));

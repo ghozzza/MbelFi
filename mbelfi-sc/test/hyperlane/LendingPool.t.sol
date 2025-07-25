@@ -11,10 +11,11 @@ import {MockUSDC} from "../../src/hyperlane/mocks/MockUSDC.sol";
 import {MockUSDT} from "../../src/hyperlane/mocks/MockUSDT.sol";
 import {MockWBTC} from "../../src/hyperlane/mocks/MockWBTC.sol";
 import {MockWETH} from "../../src/hyperlane/mocks/MockWETH.sol";
-import {MockWAVAX} from "../../src/hyperlane/mocks/MockWAVAX.sol";
+import {MockWXTZ} from "../../src/hyperlane/mocks/MockWXTZ.sol";
 import {HelperTestnet} from "../../src/hyperlane/HelperTestnet.sol";
 import {IsHealthy} from "../../src/hyperlane/IsHealthy.sol";
 import {Protocol} from "../../src/hyperlane/Protocol.sol";
+import {Pricefeed} from "../../src/hyperlane/Pricefeed.sol";
 
 contract LendingPoolFactoryHyperlaneTest is Test {
     IsHealthy public isHealthy;
@@ -26,22 +27,23 @@ contract LendingPoolFactoryHyperlaneTest is Test {
     MockWBTC public wbtc;
     MockWETH public weth;
     MockUSDT public usdt;
-    MockWAVAX public wavax;
+    MockWXTZ public wxtz;
     Protocol public protocol;
     HelperTestnet public helperTestnet;
+    Pricefeed public pricefeed;
 
     address public owner = makeAddr("owner");
 
     address public alice = makeAddr("alice");
     address public bob = makeAddr("bob");
 
-    address public ArbBtcUsd = 0x56a43EB56Da12C0dc1D972ACb089c06a5dEF8e69;
-    address public ArbEthUsd = 0xd30e2101a97dcbAeBCBC04F14C3f624E67A35165;
-    address public ArbAvaxUsd = 0xe27498c9Cc8541033F265E63c8C29A97CfF9aC6D;
-    address public ArbUsdcUsd = 0x0153002d20B96532C639313c2d54c3dA09109309;
-    address public ArbUsdtUsd = 0x80EDee6f667eCc9f63a0a6f55578F870651f06A4;
+    address public ORACLE_BtcUsd = 0xfe66A25096128f57D3876D42cD2B4347a77784c2;
+    address public ORACLE_EthUsd = 0xb31D94df41ccc22b46fd2Ae4eA2a6D6eB9c23bfb;
+    address public ORACLE_XtzUsd = 0xE06FE39f066562DBfE390167AE49D8Cb66e1F887;
+    address public ORACLE_UsdcUsd;
+    address public ORACLE_UsdtUsd;
 
-    uint256 public chainId = 421614;
+    uint256 public chainId = 128123;
 
     bool priceFeedIsActive = false;
 
@@ -50,8 +52,7 @@ contract LendingPoolFactoryHyperlaneTest is Test {
 
     function setUp() public {
         vm.startPrank(alice);
-        // vm.createSelectFork("https://api.avax-test.network/ext/bc/C/rpc");
-        vm.createSelectFork(vm.rpcUrl("arb_sepolia"));
+        vm.createSelectFork(vm.rpcUrl("etherlink_testnet"));
 
         isHealthy = new IsHealthy();
         lendingPoolDeployer = new LendingPoolDeployer();
@@ -62,7 +63,7 @@ contract LendingPoolFactoryHyperlaneTest is Test {
         usdt = new MockUSDT(address(helperTestnet));
         wbtc = new MockWBTC(address(helperTestnet));
         weth = new MockWETH(address(helperTestnet));
-        wavax = new MockWAVAX(address(helperTestnet));
+        wxtz = new MockWXTZ(address(helperTestnet));
 
         lendingPoolFactory = new LendingPoolFactory(
             address(isHealthy), address(lendingPoolDeployer), address(protocol), address(helperTestnet)
@@ -70,11 +71,21 @@ contract LendingPoolFactoryHyperlaneTest is Test {
         lendingPool = new LendingPool(address(weth), address(usdc), address(lendingPoolFactory), 7e17);
         position = new Position(address(weth), address(usdc), address(lendingPool), address(lendingPoolFactory));
 
-        lendingPoolFactory.addTokenDataStream(address(wbtc), ArbBtcUsd);
-        lendingPoolFactory.addTokenDataStream(address(weth), ArbEthUsd);
-        lendingPoolFactory.addTokenDataStream(address(wavax), ArbAvaxUsd);
-        lendingPoolFactory.addTokenDataStream(address(usdc), ArbUsdcUsd);
-        lendingPoolFactory.addTokenDataStream(address(usdt), ArbUsdtUsd);
+        pricefeed = new Pricefeed(address(usdc));
+        pricefeed.setPrice(1e8);
+        lendingPoolFactory.addTokenDataStream(address(usdc), address(pricefeed));
+        ORACLE_UsdcUsd = address(pricefeed);
+
+        pricefeed = new Pricefeed(address(usdt));
+        pricefeed.setPrice(1e8);
+        lendingPoolFactory.addTokenDataStream(address(usdt), address(pricefeed));
+        ORACLE_UsdtUsd = address(pricefeed);
+
+        lendingPoolFactory.addTokenDataStream(address(wbtc), ORACLE_BtcUsd);
+        lendingPoolFactory.addTokenDataStream(address(weth), ORACLE_EthUsd);
+        lendingPoolFactory.addTokenDataStream(address(wxtz), ORACLE_XtzUsd);
+        lendingPoolFactory.addTokenDataStream(address(usdc), ORACLE_UsdcUsd);
+        lendingPoolFactory.addTokenDataStream(address(usdt), ORACLE_UsdtUsd);
 
         lendingPoolDeployer.setFactory(address(lendingPoolFactory));
         vm.stopPrank();

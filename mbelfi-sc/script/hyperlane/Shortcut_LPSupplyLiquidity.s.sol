@@ -14,9 +14,12 @@ contract LPSupplyLiquidityScript is Script, Helper {
     // ----------------------------
 
     function setUp() public {
+        // ***************** HOST CHAIN *****************
+        vm.createSelectFork(vm.rpcUrl("etherlink_testnet"));
+        // **********************************************
         // vm.createSelectFork(vm.rpcUrl("rise_sepolia"));
         // vm.createSelectFork(vm.rpcUrl("op_sepolia"));
-        vm.createSelectFork(vm.rpcUrl("arb_sepolia"));
+        // vm.createSelectFork(vm.rpcUrl("arb_sepolia"));
         // vm.createSelectFork(vm.rpcUrl("avalanche_fuji"));
         // vm.createSelectFork(vm.rpcUrl("cachain_sepolia"));
         // vm.createSelectFork(vm.rpcUrl("educhain"));
@@ -27,7 +30,7 @@ contract LPSupplyLiquidityScript is Script, Helper {
     // Make sure you have enough collateral in the wallet
     function run() public {
         uint256 privateKey = vm.envUint("PRIVATE_KEY");
-        address borrowToken = ILendingPool(ARB_lp).borrowToken();
+        address borrowToken = ILendingPool(ORIGIN_lendingPool).borrowToken();
         uint256 decimal = IERC20Metadata(borrowToken).decimals();
 
         vm.startBroadcast(privateKey);
@@ -43,8 +46,8 @@ contract LPSupplyLiquidityScript is Script, Helper {
             return;
         } else {
             console.log("Your balance before supply liquidity", balance);
-            IERC20(borrowToken).approve(ARB_lp, amountSupplyLiquidity);
-            ILendingPool(ARB_lp).supplyLiquidity(amountSupplyLiquidity);
+            IERC20(borrowToken).approve(ORIGIN_lendingPool, amountSupplyLiquidity);
+            ILendingPool(ORIGIN_lendingPool).supplyLiquidity(amountSupplyLiquidity);
             console.log("success");
             console.log("Your balance after supply liquidity", IERC20(borrowToken).balanceOf(yourWallet));
         }

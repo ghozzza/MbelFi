@@ -7,18 +7,19 @@ import {IFactory} from "../../src/hyperlane/interfaces/IFactory.sol";
 
 contract CreateLPScript is Script, Helper {
     // --------- FILL THIS ----------
-    address collateralToken = ARB_WETH;
-    address borrowToken = ARB_USDC;
+    address collateralToken = ORIGIN_WETH;
+    address borrowToken = ORIGIN_USDC;
     uint256 ltv = 7e17;
     // ----------------------------
 
-    address factory = ARB_factory;
+    address factory = ORIGIN_lendingPoolFactory;
 
     function setUp() public {
         // ***************** HOST CHAIN *****************
-        vm.createSelectFork(vm.rpcUrl("arb_sepolia"));
+        vm.createSelectFork(vm.rpcUrl("etherlink_testnet"));
         // **********************************************
 
+        // vm.createSelectFork(vm.rpcUrl("arb_sepolia"));
         // vm.createSelectFork(vm.rpcUrl("base_sepolia"));
     }
 

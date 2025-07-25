@@ -41,7 +41,7 @@ contract MockUSDC is ERC20 {
         _burn(msg.sender, amount);
     }
 
-    function decimals() public view override returns (uint8) {
+    function decimals() public pure override returns (uint8) {
         return 6;
     }
 

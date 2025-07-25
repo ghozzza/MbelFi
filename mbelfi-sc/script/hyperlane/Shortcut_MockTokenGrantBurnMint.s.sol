@@ -17,19 +17,19 @@ contract MockTokenGrantBurnMint is Script, Helper {
         vm.startBroadcast(privateKey);
         address tokenSenderUSDC = ITokenSwap(ARB_USDC).bridgeTokenSenders(84532, 0);
         ITokenSwap(ARB_USDC).grantMintAndBurnRoles(tokenSenderUSDC);
-        
+
         address tokenSenderUSDT = ITokenSwap(ARB_USDT).bridgeTokenSenders(84532, 0);
         ITokenSwap(ARB_USDT).grantMintAndBurnRoles(tokenSenderUSDT);
-        
-        address tokenSenderWAVAX = ITokenSwap(ARB_WAVAX).bridgeTokenSenders(84532, 0);
-        ITokenSwap(ARB_WAVAX).grantMintAndBurnRoles(tokenSenderWAVAX);
-        
+
+        address tokenSenderWxtz = ITokenSwap(ARB_WXTZ).bridgeTokenSenders(84532, 0);
+        ITokenSwap(ARB_WXTZ).grantMintAndBurnRoles(tokenSenderWxtz);
+
         address tokenSenderWBTC = ITokenSwap(ARB_WBTC).bridgeTokenSenders(84532, 0);
         ITokenSwap(ARB_WBTC).grantMintAndBurnRoles(tokenSenderWBTC);
-        
+
         address tokenSenderWETH = ITokenSwap(ARB_WETH).bridgeTokenSenders(84532, 0);
         ITokenSwap(ARB_WETH).grantMintAndBurnRoles(tokenSenderWETH);
-        
+
         vm.stopBroadcast();
     }
     // RUN
