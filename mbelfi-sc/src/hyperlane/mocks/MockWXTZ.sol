@@ -19,9 +19,13 @@ contract MockWXTZ is ERC20 {
         owner = msg.sender;
     }
 
-    modifier onlyOwner() {
-        if (msg.sender != owner) revert NotOwner();
+    modifier _onlyOwner() {
+        __onlyOwner();
         _;
+    }
+
+    function __onlyOwner() internal view {
+        if (msg.sender != owner) revert NotOwner();
     }
 
     // this function for hackathon purposes
@@ -45,7 +49,7 @@ contract MockWXTZ is ERC20 {
         return 18;
     }
 
-    function addBridgeTokenSender(address _bridgeTokenSender) public onlyOwner {
+    function addBridgeTokenSender(address _bridgeTokenSender) public _onlyOwner {
         uint256 _chainId = IMbelfiBridgeTokenSender(_bridgeTokenSender).chainId();
         if (_chainId == 0) revert InvalidChainId();
         bridgeTokenSenders[_chainId].push(_bridgeTokenSender);

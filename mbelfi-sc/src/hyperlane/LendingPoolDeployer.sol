@@ -27,13 +27,21 @@ contract LendingPoolDeployer {
     }
 
     modifier onlyFactory() {
-        if (msg.sender != factory) revert OnlyFactoryCanCall();
+        _onlyFactory();
         _;
     }
 
-    modifier onlyOwner() {
-        if (msg.sender != owner) revert OnlyOwnerCanCall();
+    function _onlyFactory() internal view {
+        if (msg.sender != factory) revert OnlyFactoryCanCall();
+    }
+
+    modifier _onlyOwner() {
+        __onlyOwner();
         _;
+    }
+
+    function __onlyOwner() internal view {
+        if (msg.sender != owner) revert OnlyOwnerCanCall();
     }
 
     /**
@@ -63,7 +71,7 @@ contract LendingPoolDeployer {
         return address(lendingPool);
     }
 
-    function setFactory(address _factory) public onlyOwner {
+    function setFactory(address _factory) public _onlyOwner {
         factory = _factory;
     }
 }

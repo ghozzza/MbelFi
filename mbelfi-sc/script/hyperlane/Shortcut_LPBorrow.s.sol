@@ -14,6 +14,7 @@ contract LPBorrowScript is Script, Helper {
     // --------- FILL THIS ----------
     address public yourWallet = vm.envAddress("ADDRESS");
     uint256 public amount = 1;
+    // uint32 public chainId = 421614;
     uint32 public chainId = 84532;
     // uint256 public chainId = 128123;
     // ----------------------------

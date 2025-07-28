@@ -24,8 +24,12 @@ contract MbelfiBridgeTokenReceiver is IMessageRecipient {
     }
 
     modifier onlyMailbox() {
-        if (msg.sender != address(mailbox)) revert NotMailbox();
+        _onlyMailbox();
         _;
+    }
+
+    function _onlyMailbox() internal view {
+        if (msg.sender != address(mailbox)) revert NotMailbox();
     }
 
     // Called by Hyperlane when message arrives

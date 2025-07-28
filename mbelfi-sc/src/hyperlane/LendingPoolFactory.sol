@@ -94,8 +94,12 @@ contract LendingPoolFactory {
      * @notice Modifier to restrict function access to the owner only
      */
     modifier onlyOwner() {
-        require(msg.sender == owner, "Only owner can call this function");
+        _onlyOwner();
         _;
+    }
+
+    function _onlyOwner() internal view {
+        require(msg.sender == owner, "Only owner can call this function");
     }
 
     /**
@@ -125,5 +129,9 @@ contract LendingPoolFactory {
     function addTokenDataStream(address _token, address _dataStream) public onlyOwner {
         tokenDataStream[_token] = _dataStream;
         emit TokenDataStreamAdded(_token, _dataStream);
+    }
+
+    function updateHelper(address _helper) public onlyOwner {
+        helper = _helper;
     }
 }

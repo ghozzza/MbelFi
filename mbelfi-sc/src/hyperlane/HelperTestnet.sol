@@ -21,8 +21,12 @@ contract HelperTestnet {
     uint256 public chainId;
 
     modifier onlyOwner() {
-        if (msg.sender != owner) revert NotOwner();
+        _onlyOwner();
         _;
+    }
+
+    function _onlyOwner() internal view {
+        if (msg.sender != owner) revert NotOwner();
     }
 
     constructor() {
@@ -42,7 +46,7 @@ contract HelperTestnet {
 
         // ARBITRUM_SEPOLIA
         chains[421614] =
-            ChainInfo(0x598facE78a4302f11E3de0bee1894Da0b2Cb71F8, 0xc756cFc1b7d0d4646589EDf10eD54b201237F5e8, 421614);
+            ChainInfo(0xeeCe1088FD44E74Eb7B0045a4798a4c97A8143dC, 0xdf2706AD5966ac71C9016b4a4F93c9054e48F54b, 421614);
 
         // BASE_SEPOLIA
         chains[84532] =
@@ -180,9 +184,13 @@ contract HelperTestnet {
     function addChain(address _mailbox, address _gasMaster, uint32 _domainId, uint256 _chainId) public onlyOwner {
         if (chains[_chainId].mailbox != address(0)) revert ChainAlreadyExists();
         chains[_chainId] = ChainInfo(_mailbox, _gasMaster, _domainId);
-    }
+    }    
 
     function addReceiverBridge(uint256 _chainId, address _receiverBridge) public onlyOwner {
         receiverBridge[_chainId] = _receiverBridge;
+    }
+
+    function updateChain(uint256 _chainId, address _mailbox, address _gasMaster, uint32 _domainId) public onlyOwner {
+        chains[_chainId] = ChainInfo(_mailbox, _gasMaster, _domainId);
     }
 }

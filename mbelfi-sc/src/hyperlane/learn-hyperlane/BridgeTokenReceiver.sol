@@ -23,8 +23,12 @@ contract BridgeTokenReceiver is IMessageRecipient {
     }
 
     modifier onlyMailbox() {
-        if (msg.sender != address(mailbox)) revert NotMailbox();
+        _onlyMailbox();
         _;
+    }
+
+    function _onlyMailbox() internal view {
+        if (msg.sender != address(mailbox)) revert NotMailbox();
     }
 
     // Fungsi ini dipanggil oleh Hyperlane saat pesan datang

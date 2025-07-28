@@ -34,8 +34,12 @@ contract BridgeTokenRouter {
     }
 
     modifier onlyMailbox() {
-        if (msg.sender != address(mailbox)) revert NotMailbox();
+        _onlyMailbox();
         _;
+    }
+
+    function _onlyMailbox() internal {
+        if (msg.sender != address(mailbox)) revert NotMailbox();
     }
 
     function bridge(uint256 _amount, address _recipient, uint256 _chainId) external payable returns (bytes32) {

@@ -105,12 +105,16 @@ contract Position is ReentrancyGuard {
      * @dev Automatically adds new tokens to the position's token tracking system
      */
     modifier checkTokenList(address _token) {
+        _checkTokenList(_token);
+        _;
+    }
+
+    function _checkTokenList(address _token) internal {
         if (tokenListsId[_token] == 0) {
             ++counter;
             tokenLists[counter] = _token;
             tokenListsId[_token] = counter;
         }
-        _;
     }
 
     /**

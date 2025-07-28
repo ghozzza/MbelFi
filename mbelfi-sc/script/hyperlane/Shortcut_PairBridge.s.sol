@@ -20,41 +20,42 @@ contract ShortcutPairBridgeScript is Script {
     address public BASE_SEPOLIA_ACCOUNT_ROUTER = 0x677a021bdf36a7409D02A974cb6E19EE4c2F0632;
     address public BASE_SEPOLIA_ISM = 0x924fF8657070da8e038F0B5867e09aFd7c46D1A9;
 
+    // ******* ARBITRUM_SEPOLIA
+    address public ARB_SEPOLIA_MAILBOX = 0xeeCe1088FD44E74Eb7B0045a4798a4c97A8143dC;
+    uint32 public ARB_SEPOLIA_DOMAIN = 421614;
+    address public ARB_SEPOLIA_ACCOUNT_ROUTER = 0xdf2706AD5966ac71C9016b4a4F93c9054e48F54b;
+    address public ARB_SEPOLIA_ISM = 0x810bCA522337827fC846edd5d34020080Ecbfc0B;
+
     // ******* DESTINATION_CHAIN_DOMAIN
     // ** Deploy hyperlane on new chain
-    address public DESTINATION_CHAIN_MAILBOX = BASE_SEPOLIA_MAILBOX;
-    uint32 public DESTINATION_CHAIN_DOMAIN = BASE_SEPOLIA_DOMAIN;
-    address public DESTINATION_CHAIN_ACCOUNT_ROUTER = BASE_SEPOLIA_ACCOUNT_ROUTER;
-    address public DESTINATION_CHAIN_ISM = BASE_SEPOLIA_ISM;
-
-
-    //**************** Fill This ****************************
-    uint256 public amount = 12e6;
-    //*******************************************************
+    address public DESTINATION_CHAIN_MAILBOX = ARB_SEPOLIA_MAILBOX;
+    uint32 public DESTINATION_CHAIN_DOMAIN = ARB_SEPOLIA_DOMAIN;
+    address public DESTINATION_CHAIN_ACCOUNT_ROUTER = ARB_SEPOLIA_ACCOUNT_ROUTER;
+    address public DESTINATION_CHAIN_ISM = ARB_SEPOLIA_ISM;
 
     uint256 public currentChainId = 421614;
 
     function setUp() public {
         // source chain
-        vm.createSelectFork(vm.rpcUrl("etherlink_testnet"));
+        // vm.createSelectFork(vm.rpcUrl("etherlink_testnet"));
 
         // destination chain
         // vm.createSelectFork(vm.rpcUrl("base_sepolia"));
-        // vm.createSelectFork(vm.rpcUrl("arb_sepolia"));
+        vm.createSelectFork(vm.rpcUrl("arb_sepolia"));
     }
 
     function run() public payable {
         uint256 privateKey = vm.envUint("PRIVATE_KEY");
 
         vm.startBroadcast(privateKey);
-        if (block.chainid == 421614) {
+        if (block.chainid == ETHERLINK_TESTNET_DOMAIN) {
             IAccountRouter(ETHERLINK_TESTNET_ACCOUNT_ROUTER).enrollRemoteRouterAndIsm(
                 uint32(DESTINATION_CHAIN_DOMAIN),
                 bytes32(uint256(uint160(DESTINATION_CHAIN_ACCOUNT_ROUTER))),
                 bytes32(uint256(uint160(DESTINATION_CHAIN_ISM)))
             );
             console.log("Enrolled remote router and ism are successfully on source chain:", block.chainid);
-        } else {
+        } else if (block.chainid == DESTINATION_CHAIN_DOMAIN) {
             IAccountRouter(DESTINATION_CHAIN_ACCOUNT_ROUTER).enrollRemoteRouterAndIsm(
                 uint32(ETHERLINK_TESTNET_DOMAIN),
                 bytes32(uint256(uint160(ETHERLINK_TESTNET_ACCOUNT_ROUTER))),
@@ -65,15 +66,9 @@ contract ShortcutPairBridgeScript is Script {
         vm.stopBroadcast();
     }
 
-    // Function to receive Ether. msg.data must be empty
-    receive() external payable {}
-
-    // Fallback function is called when msg.data is not empty
-    fallback() external payable {}
-
     // RUN and verify
-    // forge script ShortcutBridgeScript --verify --broadcast -vvv
-    // forge script ShortcutBridgeScript --broadcast -vvv
+    // forge script ShortcutPairBridgeScript --verify --broadcast -vvv
+    // forge script ShortcutPairBridgeScript --broadcast -vvv
 }
 
 // Warp Route config is valid, writing to file undefined:
