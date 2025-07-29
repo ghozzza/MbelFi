@@ -104,31 +104,3 @@ contract ShortcutBridgeScript is Script {
     // forge script ShortcutBridgeScript --verify --broadcast -vvv
     // forge script ShortcutBridgeScript --broadcast -vvv
 }
-
-// ? Select arbitrumsepolia's token type collateral
-// ? Enter the existing token address on chain arbitrumsepolia 0xA81DAACD4C3fC6319991B617107440D64E7FabA9
-// etherlinktestnet: Configuring warp route...
-// ? Using owner address as 0xa5ea1Cb1033F5d3BD207bF6a2a2504cF1c3e9F42 from signer, is this correct? yes
-// ? Use an existing Proxy Admin contract for the warp route deployment on chain "etherlinktestnet"? yes
-// ? Please enter the address of the Proxy Admin contract to be used on chain "etherlinktestnet":
-// 0x1666f73dAAf09E14A8db183414E231F348E093FB
-// ? Do you want to use a trusted ISM for warp route? yes
-// ? Select etherlinktestnet's token type collateral
-// ? Enter the existing token address on chain etherlinktestnet 0x69f38FFB1aB8f8f8A43F3D8d3CDAAF184CD54EcE
-
-// ? Using owner address as 0xa5ea1Cb1033F5d3BD207bF6a2a2504cF1c3e9F42 from signer, is this correct? yes
-// ? Use an existing Proxy Admin contract for the warp route deployment on chain "basesepolia"? yes
-// ? Please enter the address of the Proxy Admin contract to be used on chain "basesepolia": 0x44b764045BfDC68517e10e783E69B376cef196B2
-// ? Do you want to use a trusted ISM for warp route? yes
-// ? Select basesepolia's token type collateral
-// ? Enter the existing token address on chain basesepolia 0x0B4b2CbE85A234167Dd41f6f5f333ed402fc09f0
-// etherlinktestnet: Configuring warp route...
-// ? Using owner address as 0xa5ea1Cb1033F5d3BD207bF6a2a2504cF1c3e9F42 from signer, is this correct? yes
-// ? Use an existing Proxy Admin contract for the warp route deployment on chain "etherlinktestnet"? yes
-// ? Please enter the address of the Proxy Admin contract to be used on chain "etherlinktestnet":
-// 0x1666f73dAAf09E14A8db183414E231F348E093FB
-// ? Do you want to use a trusted ISM for warp route? yes
-// ? Select etherlinktestnet's token type xERC20
-// ? Enter the existing token address on chain etherlinktestnet 
-
-// Warp Route config is valid, writing to file undefined:
