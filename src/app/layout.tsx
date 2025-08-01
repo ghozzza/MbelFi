@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Providers } from "./providers";
+import GlowingGridBackground from "@/components/glowing-grid-background";
+import { NavbarNeon } from "@/components/navbar";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,7 +31,16 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <Providers>
+          <GlowingGridBackground />
+          <Toaster />
+          <NavbarNeon />
+          <div className="relative flex flex-col h-screen">
+            <main className="container mx-auto max-w-7xl pt-16 flex-grow">
+              {children}
+            </main>
+          </div>
+        </Providers>
       </body>
     </html>
   );
