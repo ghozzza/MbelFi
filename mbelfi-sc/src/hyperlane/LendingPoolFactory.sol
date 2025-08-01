@@ -20,16 +20,16 @@ contract LendingPoolFactory {
      * @param ltv The Loan-to-Value ratio for the pool
      */
     event LendingPoolCreated(
-        address indexed collateralToken, address indexed borrowToken, address lendingPool, uint256 ltv
+        address indexed collateralToken, address indexed borrowToken, address indexed lendingPool, uint256 ltv
     );
-    
+
     /**
      * @notice Emitted when a token data stream is added
      * @param token The address of the token
      * @param dataStream The address of the data stream contract
      */
     event TokenDataStreamAdded(address indexed token, address indexed dataStream);
-    
+
     /**
      * @notice Emitted when a basic token sender is added for a specific chain
      * @param chainId The chain ID where the token sender operates
@@ -52,10 +52,10 @@ contract LendingPoolFactory {
 
     /// @notice The owner of the factory contract
     address public owner;
-    
+
     /// @notice The address of the IsHealthy contract for health checks
     address public isHealthy;
-    
+
     /// @notice The address of the lending pool deployer contract
     address public lendingPoolDeployer;
 
@@ -64,16 +64,16 @@ contract LendingPoolFactory {
 
     /// @notice The address of the bridge router contract
     address public helper;
-    
+
     /// @notice Mapping from chain ID to basic token sender address
     mapping(uint256 => address) public basicTokenSender;
-    
+
     /// @notice Mapping from token address to its data stream address
     mapping(address => address) public tokenDataStream;
-    
+
     /// @notice Array of all created pools
     Pool[] public pools;
-    
+
     /// @notice Total number of pools created
     uint256 public poolCount;
 

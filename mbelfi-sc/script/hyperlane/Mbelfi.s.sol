@@ -20,14 +20,14 @@ import {Position} from "../../src/hyperlane/Position.sol";
 import {Pricefeed} from "../../src/hyperlane/Pricefeed.sol";
 
 contract MbelfiScript is Script {
-    HelperTestnet public helperTestnet;
+    // HelperTestnet public helperTestnet;
     MbelfiBridgeTokenReceiver public mbelfiBridgeTokenReceiver;
     MbelfiBridgeTokenSender public mbelfiBridgeTokenSender;
-    MockUSDC public mockUSDC;
-    MockUSDT public mockUSDT;
-    MockWXTZ public mockWXTZ;
-    MockWBTC public mockWBTC;
-    MockWETH public mockWETH;
+    // MockUSDC public mockUSDC;
+    // MockUSDT public mockUSDT;
+    // MockWXTZ public mockWXTZ;
+    // MockWBTC public mockWBTC;
+    // MockWETH public mockWETH;
 
     Protocol public protocol;
     IsHealthy public isHealthy;
@@ -39,6 +39,13 @@ contract MbelfiScript is Script {
 
     // ****************************************************************************
     //************** DEPLOYED TOKEN ************** (ORIGIN CHAIN)
+    address public helperTestnet = 0xe9d03184A57aC9ffc937b29d466D04bf0E7836C4;
+    address public mockUSDC = 0xB8DB4FcdD486a031a3B2CA27B588C015CB99F5F0;
+    address public mockUSDT = 0x2761372682FE39A53A5b1576467a66b258C3fec2;
+    address public mockWXTZ = 0x0320aC8A299b3da6469bE3Da9ED6c84D09309418;
+    address public mockWBTC = 0x50df5e25AB60e150f753B9444D160a80f0279559;
+    address public mockWETH = 0x0355360B7F943974404277936a5C7536B51B9A77;
+
     address public ORIGIN_helperTestnet = 0xe9d03184A57aC9ffc937b29d466D04bf0E7836C4;
     address public ORIGIN_mockUSDC = 0xB8DB4FcdD486a031a3B2CA27B588C015CB99F5F0;
     address public ORIGIN_mockUSDT = 0x2761372682FE39A53A5b1576467a66b258C3fec2;
@@ -86,7 +93,7 @@ contract MbelfiScript is Script {
 
     // ****************************************************************************
     // ********** FILL THIS
-    bool public isDeployed = true;
+    bool public isDeployed = false;
     uint32 public DESTINATION_chainId = 84532;
     // uint32 public DESTINATION_chainId = 421614;
 
@@ -103,20 +110,20 @@ contract MbelfiScript is Script {
         vm.startBroadcast(privateKey);
         if (block.chainid == DESTINATION_chainId) {
             // ** RECEIVER AND TOKEN
-            helperTestnet = new HelperTestnet();
-            mockUSDC = new MockUSDC(address(helperTestnet));
+            // helperTestnet = new HelperTestnet();
+            // mockUSDC = new MockUSDC(address(helperTestnet));
             mbelfiBridgeTokenReceiver = new MbelfiBridgeTokenReceiver(address(helperTestnet), address(mockUSDC));
             console.log("address public UsdcBridgeTokenReceiver = ", address(mbelfiBridgeTokenReceiver), ";");
-            mockUSDT = new MockUSDT(address(helperTestnet));
+            // mockUSDT = new MockUSDT(address(helperTestnet));
             mbelfiBridgeTokenReceiver = new MbelfiBridgeTokenReceiver(address(helperTestnet), address(mockUSDT));
             console.log("address public UsdtBridgeTokenReceiver = ", address(mbelfiBridgeTokenReceiver), ";");
-            mockWXTZ = new MockWXTZ(address(helperTestnet));
+            // mockWXTZ = new MockWXTZ(address(helperTestnet));
             mbelfiBridgeTokenReceiver = new MbelfiBridgeTokenReceiver(address(helperTestnet), address(mockWXTZ));
             console.log("address public WxtzBridgeTokenReceiver = ", address(mbelfiBridgeTokenReceiver), ";");
-            mockWBTC = new MockWBTC(address(helperTestnet));
+            // mockWBTC = new MockWBTC(address(helperTestnet));
             mbelfiBridgeTokenReceiver = new MbelfiBridgeTokenReceiver(address(helperTestnet), address(mockWBTC));
             console.log("address public BtcBridgeTokenReceiver = ", address(mbelfiBridgeTokenReceiver), ";");
-            mockWETH = new MockWETH(address(helperTestnet));
+            // mockWETH = new MockWETH(address(helperTestnet));
             mbelfiBridgeTokenReceiver = new MbelfiBridgeTokenReceiver(address(helperTestnet), address(mockWETH));
             console.log("address public EthBridgeTokenReceiver = ", address(mbelfiBridgeTokenReceiver), ";");
 
@@ -142,7 +149,7 @@ contract MbelfiScript is Script {
             protocol = new Protocol();
             isHealthy = new IsHealthy();
             lendingPoolDeployer = new LendingPoolDeployer();
-            helperTestnet = new HelperTestnet();
+            // helperTestnet = new HelperTestnet();
             // *************************************************
 
             // **************** DEPLOY TOKEN ******************
@@ -192,7 +199,9 @@ contract MbelfiScript is Script {
         } else if (block.chainid == ORIGIN_chainId && isDeployed) {
             ///* 1.DEPLOY HYPERLANE TO DESTINATION CHAIN
             ///* 2.DEPLOY RECEIVER
-            if (DESTINATION_chainId == 421614 || DESTINATION_chainId == 128123 || DESTINATION_chainId == 84532) revert("Deployed");
+            if (DESTINATION_chainId == 421614 || DESTINATION_chainId == 128123 || DESTINATION_chainId == 84532) {
+                revert("Deployed");
+            }
             pairBridgeToToken(ORIGIN_helperTestnet, ORIGIN_mockUSDC, UsdcBridgeTokenReceiver, DESTINATION_chainId);
             pairBridgeToToken(ORIGIN_helperTestnet, ORIGIN_mockUSDT, UsdtBridgeTokenReceiver, DESTINATION_chainId);
             pairBridgeToToken(ORIGIN_helperTestnet, ORIGIN_mockWXTZ, WxtzBridgeTokenReceiver, DESTINATION_chainId);
@@ -209,23 +218,23 @@ contract MbelfiScript is Script {
 
     function deployMockToken() public {
         if (UsdcBridgeTokenReceiver == address(0)) revert("UsdcBridgeTokenReceiver is not set");
-        mockUSDC = new MockUSDC(address(helperTestnet));
+        // mockUSDC = new MockUSDC(address(helperTestnet));
         pairBridgeToToken(address(helperTestnet), address(mockUSDC), UsdcBridgeTokenReceiver, DESTINATION_chainId);
 
         if (UsdtBridgeTokenReceiver == address(0)) revert("UsdtBridgeTokenReceiver is not set");
-        mockUSDT = new MockUSDT(address(helperTestnet));
+        // mockUSDT = new MockUSDT(address(helperTestnet));
         pairBridgeToToken(address(helperTestnet), address(mockUSDT), UsdtBridgeTokenReceiver, DESTINATION_chainId);
 
         if (WxtzBridgeTokenReceiver == address(0)) revert("WxtzBridgeTokenReceiver is not set");
-        mockWXTZ = new MockWXTZ(address(helperTestnet));
+        // mockWXTZ = new MockWXTZ(address(helperTestnet));
         pairBridgeToToken(address(helperTestnet), address(mockWXTZ), WxtzBridgeTokenReceiver, DESTINATION_chainId);
 
         if (BtcBridgeTokenReceiver == address(0)) revert("BtcBridgeTokenReceiver is not set");
-        mockWBTC = new MockWBTC(address(helperTestnet));
+        // mockWBTC = new MockWBTC(address(helperTestnet));
         pairBridgeToToken(address(helperTestnet), address(mockWBTC), BtcBridgeTokenReceiver, DESTINATION_chainId);
 
         if (EthBridgeTokenReceiver == address(0)) revert("EthBridgeTokenReceiver is not set");
-        mockWETH = new MockWETH(address(helperTestnet));
+        // mockWETH = new MockWETH(address(helperTestnet));
         pairBridgeToToken(address(helperTestnet), address(mockWETH), EthBridgeTokenReceiver, DESTINATION_chainId);
         // **************** SOLIDITY ****************
         console.log("************ COPY ORIGIN ADDRESS **************");
@@ -263,3 +272,11 @@ contract MbelfiScript is Script {
     // RUN
     // forge script MbelfiScript --broadcast -vvv --verify
 }
+
+
+// forge verify-contract \
+//   --rpc-url https://node.ghostnet.etherlink.com \
+//   --verifier blockscout \
+//   --verifier-url 'https://testnet.explorer.etherlink.com/api/' \
+//   0xb4F8A55030a9e2b3B52d6267223915846eB2d3EC \
+//   src/hyperlane/LendingPool.sol:LendingPool

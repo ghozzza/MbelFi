@@ -179,7 +179,7 @@ contract LendingPoolFactoryHyperlaneTest is Test {
 
         // Expect BorrowDebtCrosschain event
         vm.expectEmit(true, true, false, true, address(lendingPool));
-        emit LendingPool.BorrowDebtCrosschain(bob, borrowed, borrowed, chainId, 0);
+        emit LendingPool.BorrowDebtCrosschain(bob, borrowed, borrowed, chainId, address(0));
 
         // Bob borrows USDC
         uint256 protocolFee = (borrowed * 1e15) / 1e18;

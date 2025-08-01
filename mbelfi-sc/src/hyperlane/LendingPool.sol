@@ -26,13 +26,13 @@ contract LendingPool is ReentrancyGuard {
     error InsufficientBorrowShares();
     error amountSharesInvalid();
 
-    event SupplyLiquidity(address user, uint256 amount, uint256 shares);
-    event WithdrawLiquidity(address user, uint256 amount, uint256 shares);
-    event SupplyCollateral(address user, uint256 amount);
-    event RepayWithCollateralByPosition(address user, uint256 amount, uint256 shares);
-    event CreatePosition(address user, address positionAddress);
+    event SupplyLiquidity(address indexed user, uint256 amount, uint256 shares);
+    event WithdrawLiquidity(address indexed user, uint256 amount, uint256 shares);
+    event SupplyCollateral(address indexed user, uint256 amount);
+    event RepayWithCollateralByPosition(address indexed user, uint256 amount, uint256 shares);
+    event CreatePosition(address indexed user, address indexed positionAddress);
     event BorrowDebtCrosschain(
-        address user, uint256 amount, uint256 shares, uint256 chainId, uint256 bridgeTokenSender
+        address indexed user, uint256 amount, uint256 shares, uint256 indexed chainId, address indexed bridgeTokenSender
     );
 
     uint256 public totalSupplyAssets;
@@ -230,24 +230,26 @@ contract LendingPool is ReentrancyGuard {
             totalBorrowShares,
             userBorrowShares[msg.sender]
         );
+        address actualBridgeAddress;
         if (_chainId != block.chainid) {
             address helperTestnet = IFactory(factory).helper();
             (,, uint32 destinationDomain) = IHelperTestnet(helperTestnet).chains(_chainId);
             (, address interchainGasPaymaster,) = IHelperTestnet(helperTestnet).chains(block.chainid);
 
             address bridgeTokenSenders = ITokenSwap(borrowToken).bridgeTokenSenders(_chainId, _bridgeTokenSender);
-            uint256 gasAmount = IInterchainGasPaymaster(interchainGasPaymaster).quoteGasPayment(destinationDomain, userAmount); // TODO: BURN
+            actualBridgeAddress = bridgeTokenSenders;
+            uint256 gasAmount =
+                IInterchainGasPaymaster(interchainGasPaymaster).quoteGasPayment(destinationDomain, userAmount); // TODO: BURN
 
             IERC20(borrowToken).approve(bridgeTokenSenders, userAmount);
-            IMbelfiBridgeTokenSender(bridgeTokenSenders).bridge{value: gasAmount}(
-                userAmount, msg.sender, borrowToken
-            );
+            IMbelfiBridgeTokenSender(bridgeTokenSenders).bridge{value: gasAmount}(userAmount, msg.sender, borrowToken);
             IERC20(borrowToken).safeTransfer(protocol, protocolFee);
         } else {
+            actualBridgeAddress = address(0); // No bridge used for same-chain transfers
             IERC20(borrowToken).safeTransfer(msg.sender, userAmount);
             IERC20(borrowToken).safeTransfer(protocol, protocolFee);
         }
-        emit BorrowDebtCrosschain(msg.sender, amount, shares, _chainId, _bridgeTokenSender);
+        emit BorrowDebtCrosschain(msg.sender, amount, shares, _chainId, actualBridgeAddress);
     }
 
     /**

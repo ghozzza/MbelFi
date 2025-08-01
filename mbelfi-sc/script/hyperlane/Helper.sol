@@ -35,7 +35,8 @@ contract Helper is Script {
     address public ORIGIN_lendingPool = 0xcE05d498fED4B72620b8D42954002bdEbe65Fb0e;
     address public ORIGIN_position = 0x4aF0b3462411a18934318e7F17E905C77F078b5b;
 
-    address public claimAddress = vm.envAddress("ADDRESS");
+    // address public claimAddress = vm.envAddress("ADDRESS");
+    address public claimAddress = 0x9CB49d64564819f4396730b408cb16A03315B340;
 
     // chain id
     uint256 public ETH_Sepolia = 11155111;
