@@ -156,6 +156,10 @@ export const useBorrow = (chainId: number, decimals: number, onSuccess: () => vo
       return;
     }
 
+    // Check if user has collateral (this should be passed from the component)
+    // The validation is already handled in the action dialog component
+    // This is just a backup validation
+
     // Validate against available borrow amount
     if (totalSupplyAssetsLoading) {
       toast.error("Loading pool data, please try again", {

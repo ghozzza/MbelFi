@@ -35,7 +35,7 @@ export const actionConfig: Record<ActionType, ActionConfig> = {
     balanceValue: (market: EnrichedPool) =>
       `Loading... ${market.borrowTokenInfo?.symbol || market.borrowToken}`,
     apyLabel: "APY",
-    apyValue: (_market: EnrichedPool) => `-`,
+    apyValue: (_market: EnrichedPool) => `4.50%`,
     apyColor: "text-green-400",
     showApy: true,
     tokenSymbol: (market: EnrichedPool) =>
@@ -70,7 +70,7 @@ export const actionConfig: Record<ActionType, ActionConfig> = {
     balanceValue: (market: EnrichedPool) =>
       `Loading... ${market.borrowTokenInfo?.symbol || market.borrowToken}`,
     apyLabel: "APY",
-    apyValue: (_market: EnrichedPool) => `-`,
+    apyValue: (_market: EnrichedPool) => `4.50%`,
     apyColor: "text-green-400",
     showApy: true,
     tokenSymbol: (market: EnrichedPool) =>
@@ -121,7 +121,7 @@ export const actionConfig: Record<ActionType, ActionConfig> = {
     balanceValue: (market: EnrichedPool) =>
       `Loading... ${market.borrowTokenInfo?.symbol || market.borrowToken}`,
     apyLabel: "Borrow APY",
-    apyValue: (_market: EnrichedPool) => `-`,
+    apyValue: (_market: EnrichedPool) => `4.00%`,
     apyColor: "text-red-400",
     showApy: true,
     tokenSymbol: (market: EnrichedPool) =>

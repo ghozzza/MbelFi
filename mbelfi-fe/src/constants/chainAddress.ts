@@ -70,7 +70,7 @@ export const chains: Chain[] = [
   {
     id: 128123,
     name: "Etherlink Testnet",
-    logo: "/chain/ethereum.png", // Using Ethereum logo as placeholder
+    logo: "/chain/etherlink-logo.jpeg", // Using Ethereum logo as placeholder
     color: "bg-green-600",
     destination: 4,
     contracts: {

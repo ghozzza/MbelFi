@@ -3,6 +3,7 @@ import { formatUnits } from "viem";
 /**
  * Formats a BigInt value from wei to a human-readable number string
  * Avoids scientific notation for very small numbers
+ * Rounds up (ceiling) for decimal numbers
  */
 export const formatWeiToNumber = (value: bigint | null | undefined, decimals: number): string => {
   if (value == null) return "0";
@@ -19,16 +20,21 @@ export const formatWeiToNumber = (value: bigint | null | undefined, decimals: nu
     // For normal numbers, use toFixed to avoid scientific notation
     if (num === 0) return "0";
     if (num < 1) {
-      return num.toFixed(6).replace(/\.?0+$/, ''); // Up to 6 decimal places for small numbers
+      // Round up (ceiling) for decimal numbers
+      const roundedUp = Math.ceil(num * 100) / 100;
+      return roundedUp.toFixed(2).replace(/\.?0+$/, ''); // Up to 2 decimal places for small numbers
     }
     if (num < 1000) {
-      return num.toFixed(2).replace(/\.?0+$/, ''); // 2 decimal places for normal numbers
+      // Round up (ceiling) for decimal numbers to nearest whole number
+      const roundedUp = Math.ceil(num);
+      return roundedUp.toString(); // Return as whole number
     }
     
-    // For large numbers, use locale formatting
-    return num.toLocaleString('en-US', {
+    // For large numbers, use locale formatting with ceiling
+    const roundedUp = Math.ceil(num);
+    return roundedUp.toLocaleString('en-US', {
       minimumFractionDigits: 0,
-      maximumFractionDigits: 2
+      maximumFractionDigits: 0
     });
   } catch (error) {
     console.error('Error formatting wei to number:', error);

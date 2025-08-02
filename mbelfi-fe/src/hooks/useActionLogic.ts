@@ -25,7 +25,7 @@ export const useActionLogic = (type: ActionType, market: EnrichedPool) => {
           market.collateralTokenInfo?.address?.toLowerCase()
       );
       return token?.decimals || 18;
-    } else if (type === "supply_liquidity" || type === "withdraw_liquidity" || type === "borrow") {
+    } else if (type === "supply_liquidity" || type === "withdraw_liquidity" || type === "borrow" || type === "repay") {
       if (!market?.borrowTokenInfo?.address) return 18;
 
       const token = tokens.find(

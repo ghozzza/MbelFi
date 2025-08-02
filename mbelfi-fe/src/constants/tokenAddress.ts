@@ -42,8 +42,8 @@ export const tokens: Token[] = [
     },
   },
   {
-    name: "WAVAX",
-    symbol: "WAVAX",
+    name: "XTZ",
+    symbol: "XTZ",
     logo: "/token/wavax.png",
     decimals: 18,
     addresses: {

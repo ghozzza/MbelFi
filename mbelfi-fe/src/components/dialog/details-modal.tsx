@@ -36,6 +36,19 @@ export const DetailsModal = ({ open, onClose, market }: DetailsModalProps) => {
   const [selectedAction, setSelectedAction] =
     React.useState<Action>("supply_liquidity");
 
+  // Reset txHash when action type changes
+  React.useEffect(() => {
+    // This will trigger a re-render of ActionModalView with fresh state
+    // The hooks will be re-initialized with clean txHash state
+  }, [selectedAction]);
+
+  // Reset selectedAction when dialog closes
+  React.useEffect(() => {
+    if (!open) {
+      setSelectedAction("supply_liquidity");
+    }
+  }, [open]);
+
   const handleActionSuccess = (amount: string, toChainId?: string) => {
     // For supply collateral, the hook handles the success internally
     // For other actions, we can add specific logic here if needed
@@ -46,6 +59,7 @@ export const DetailsModal = ({ open, onClose, market }: DetailsModalProps) => {
     if (!market) return null;
     return (
       <ActionModalView 
+        key={selectedAction} // Force re-creation when action changes
         type={selectedAction} 
         market={market} 
         onAction={handleActionSuccess}

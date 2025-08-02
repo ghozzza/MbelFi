@@ -12,13 +12,24 @@ interface ChainSelectorProps {
   fromChain?: any;
   toChainId: string;
   setToChainId: (value: string) => void;
+  isBorrowMode?: boolean; // New prop for borrow mode
 }
 
 export const ChainSelector: React.FC<ChainSelectorProps> = ({
   fromChain,
   toChainId,
   setToChainId,
+  isBorrowMode = false,
 }) => {
+  // Filter chains for borrow mode
+  const availableChains = isBorrowMode 
+    ? chains.filter(chain => 
+        chain.name === "Etherlink Testnet" || 
+        chain.name === "Base" || 
+        chain.name === "Arbitrum"
+      )
+    : chains;
+
   return (
     <div className="flex flex-col sm:flex-row gap-4 items-center">
       <div className="flex-1 w-full">
@@ -48,7 +59,7 @@ export const ChainSelector: React.FC<ChainSelectorProps> = ({
             />
           </SelectTrigger>
           <SelectContent className="bg-gray-800/95 backdrop-blur-sm border border-gray-600/50 rounded-xl shadow-xl z-[1000]">
-            {chains.length === 0 ? (
+            {availableChains.length === 0 ? (
               <SelectItem
                 value="none"
                 className="text-gray-400 hover:bg-gray-700/50 focus:bg-gray-700/50"
@@ -56,7 +67,7 @@ export const ChainSelector: React.FC<ChainSelectorProps> = ({
                 No chains available
               </SelectItem>
             ) : (
-              chains.map((chain) => (
+              availableChains.map((chain) => (
                 <SelectItem
                   key={String(chain.id)}
                   value={String(chain.id)}

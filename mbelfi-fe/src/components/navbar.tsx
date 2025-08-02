@@ -20,6 +20,7 @@ export const NavbarNeon = () => {
     { id: "swap", label: "Swap", href: "/swap" },
     { id: "history", label: "History", href: "/history" },
     { id: "docs", label: "Docs", href: "/docs" },
+    { id: "faucet", label: "Faucets", href: "/faucets" },
   ];
 
   useEffect(() => {
@@ -65,7 +66,7 @@ export const NavbarNeon = () => {
       <div className="relative bg-gray-950/90 rounded-2xl px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="text-2xl font-bold text-cyan-400 drop-shadow-lg">
-            <span className="text-shadow-neon">CAER</span>
+            <span className="text-shadow-neon">MbelFi</span>
           </div>
           <div
             ref={navRef}
