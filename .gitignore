@@ -39,3 +39,27 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Smart Contract files
+mbelfi-sc/cache/
+mbelfi-sc/out/
+
+# Ignores development broadcast logs
+mbelfi-sc/broadcast
+mbelfi-sc/broadcast/*/31337/
+mbelfi-sc/broadcast/**/dry-run/
+
+# Docs
+mbelfi-sc/docs/
+
+# Dotenv file
+mbelfi-sc/.env
+
+mbelfi-sc/src/layerzero/
+mbelfi-sc/src/hyperlane/learn-hyperlane/
+
+mbelfi-sc/test/layerzero/
+
+mbelfi-sc/script/BridgeTokenReceiver.s.sol
+mbelfi-sc/script/BridgeTokenSender.s.sol
+mbelfi-sc/script/Shortcut_Bridge.s.sol
