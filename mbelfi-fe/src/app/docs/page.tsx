@@ -17,7 +17,7 @@ const DocsRedirectPage: React.FC = () => {
       setRedirecting(true);
       // Redirect after animation completes
       setTimeout(() => {
-        window.location.href = targetUrl;
+        window.open(targetUrl, '_blank');
       }, 1000);
     }, 3500);
 
