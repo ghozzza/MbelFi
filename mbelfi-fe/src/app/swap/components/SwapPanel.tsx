@@ -59,7 +59,7 @@ export default function SwapPanel() {
   } = useSwapLogic();
 
   return (
-    <div className="max-w-md mx-auto w-full px-2 py-2">
+    <div className="max-w-xl mx-auto w-full px-2 ">
       <div className="flex flex-row gap-2 mb-5">
         <div className="flex-1 min-w-0">
           <Select onValueChange={(value) => setLpAddressSelected(value)}>
