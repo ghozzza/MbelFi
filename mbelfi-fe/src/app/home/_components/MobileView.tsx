@@ -6,13 +6,18 @@ import { Search, Plus } from "lucide-react";
 import { CreatePoolDialog } from "@/components/dialog/create-pool";
 import { DetailsModal } from "@/components/dialog/details-modal";
 import { getPools } from "@/lib/get-pools";
-import { enrichPoolWithTokenInfo, EnrichedPool } from "@/lib/pair-token-address";
+import {
+  enrichPoolWithTokenInfo,
+  EnrichedPool,
+} from "@/lib/pair-token-address";
 import Image from "next/image";
+import { LiquidityDisplay } from "@/components/pool/LiquidityDisplay";
 
 const MobileView = () => {
   const [createPoolOpen, setCreatePoolOpen] = React.useState(false);
   const [detailsOpen, setDetailsOpen] = React.useState(false);
-  const [selectedMarket, setSelectedMarket] = React.useState<EnrichedPool | null>(null);
+  const [selectedMarket, setSelectedMarket] =
+    React.useState<EnrichedPool | null>(null);
   const [pools, setPools] = React.useState<EnrichedPool[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
@@ -78,6 +83,36 @@ const MobileView = () => {
           </Button>
         </div>
 
+        {/* Dashboard Section */}
+        <Card className="border border-cyan-800 bg-gray-900 text-gray-100 shadow-xl">
+          <CardContent className="w-full flex flex-col space-y-4 px-4 py-6">
+            <div className="flex justify-between items-center">
+              <div className="flex flex-col items-center">
+                <span className="text-gray-400 text-sm font-medium">
+                  Your Collateral
+                </span>
+                <span className="text-blue-400 font-bold text-base">
+                  1 WETH
+                </span>
+              </div>
+              <div className="flex flex-col items-center">
+                <span className="text-gray-400 text-sm font-medium">
+                  Your Borrow
+                </span>
+                <span className="text-green-400 font-bold text-base">$0</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <span className="text-gray-400 text-sm font-medium">
+                  Total Value
+                </span>
+                <span className="text-cyan-400 font-bold text-base">
+                  $1,234
+                </span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {loading ? (
           <div className="text-center py-8 text-gray-400">Loading pools...</div>
         ) : error ? (
@@ -105,7 +140,9 @@ const MobileView = () => {
                     </span>
                   </div>
                   <span className="text-blue-400 font-medium">
-                    {pool.ltv ? `${(Number(pool.ltv) / 1e16).toFixed(2)}%` : "-"}
+                    {pool.ltv
+                      ? `${(Number(pool.ltv) / 1e16).toFixed(2)}%`
+                      : "-"}
                   </span>
                 </div>
                 <div className="space-y-2">
@@ -122,8 +159,18 @@ const MobileView = () => {
                         />
                       )}
                       <span className="text-gray-100">
-                        {pool.collateralTokenInfo?.symbol || pool.collateralToken}
+                        {pool.collateralTokenInfo?.symbol ||
+                          pool.collateralToken}
                       </span>
+                    </div>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Liquidity:</span>
+                    <div className="flex items-center space-x-2">
+                      <LiquidityDisplay
+                        lendingPoolAddress={pool.id}
+                        borrowTokenAddress={pool.borrowToken}
+                      />
                     </div>
                   </div>
                 </div>

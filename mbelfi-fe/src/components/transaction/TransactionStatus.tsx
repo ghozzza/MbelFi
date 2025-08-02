@@ -20,57 +20,56 @@ export const TransactionStatus: React.FC<TransactionStatusProps> = ({
   isError,
   errorMessage,
 }) => {
+  // Don't show anything for approve transactions
+  if (type === "approve") return null;
+  
   if (!txHash && !isSuccess && !isError) return null;
 
   const getStatusConfig = () => {
     switch (type) {
-      case "approve":
-        return {
-          bgColor: "from-blue-900/30 to-blue-800/20",
-          borderColor: "border-blue-500/40",
-          dotColor: "bg-blue-400",
-          textColor: "text-blue-300",
-          status: isConfirming
-            ? "Approving Token..."
-            : isSuccess
-            ? "Token Approved ✓"
-            : "Approval Pending",
-        };
       case "supply":
         return {
           bgColor: "from-green-900/30 to-green-800/20",
           borderColor: "border-green-500/40",
-          dotColor: "bg-green-400",
           textColor: "text-green-300",
           status: isConfirming
             ? "Supplying..."
             : isSuccess
-            ? "Supply Success ✓"
-            : "Supply Pending",
+            ? "Supplied"
+            : "Supply Success",
         };
       case "borrow":
         return {
           bgColor: "from-purple-900/30 to-purple-800/20",
           borderColor: "border-purple-500/40",
-          dotColor: "bg-purple-400",
           textColor: "text-purple-300",
           status: isConfirming
             ? "Borrowing..."
             : isSuccess
-            ? "Borrow Successful ✓"
-            : "Borrow Pending",
+            ? "Borrowed"
+            : "Borrow Success",
         };
       case "withdraw":
         return {
           bgColor: "from-orange-900/30 to-orange-800/20",
           borderColor: "border-orange-500/40",
-          dotColor: "bg-orange-400",
           textColor: "text-orange-300",
           status: isConfirming
             ? "Withdrawing..."
             : isSuccess
-            ? "Withdraw Successful ✓"
-            : "Withdraw Pending",
+            ? "Withdrawn"
+            : "Withdraw Success",
+        };
+      default:
+        return {
+          bgColor: "from-gray-900/30 to-gray-800/20",
+          borderColor: "border-gray-500/40",
+          textColor: "text-gray-300",
+          status: isConfirming
+            ? "Processing..."
+            : isSuccess
+            ? "Completed"
+            : "Pending",
         };
     }
   };
@@ -100,7 +99,7 @@ export const TransactionStatus: React.FC<TransactionStatusProps> = ({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div
-            className={`w-3 h-3 ${config.dotColor} rounded-full animate-pulse shadow-lg shadow-${config.dotColor}/30`}
+            className={`w-3 h-3 bg-blue-400 rounded-full animate-pulse shadow-lg shadow-blue-400/30`}
           ></div>
           <span className={`text-sm ${config.textColor} font-semibold`}>
             {config.status}

@@ -34,11 +34,14 @@ export default function RootLayout({
         <Providers>
           <GlowingGridBackground />
           <Toaster />
-          <NavbarNeon />
-          <div className="relative flex flex-col h-screen">
-            <main className="container mx-auto max-w-7xl pt-16 flex-grow">
-              {children}
-            </main>
+          <div className="mx-2">
+            <NavbarNeon />
+
+            <div className="relative flex flex-col h-screen">
+              <main className="container mx-auto max-w-7xl pt-8 flex-grow">
+                {children}
+              </main>
+            </div>
           </div>
         </Providers>
       </body>

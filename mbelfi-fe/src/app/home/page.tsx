@@ -15,7 +15,7 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="mx-2 flex items-center justify-center">
+    <div className=" flex items-center justify-center">
       {isMobile ? <MobileView /> : <DesktopView />}
     </div>
   );

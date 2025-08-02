@@ -66,12 +66,6 @@ export const DetailsModal = ({ open, onClose, market }: DetailsModalProps) => {
           <DialogTitle className="text-2xl font-bold text-blue-400">
             {(market.borrowTokenInfo?.symbol || market.borrowToken)} / {(market.collateralTokenInfo?.symbol || market.collateralToken)}
           </DialogTitle>
-          <div className="space-y-2">
-            <p className="text-xs text-gray-400 break-all">LP Address: {market.id}</p>
-            <p className="text-sm text-gray-400">
-              Manage your position in this market.
-            </p>
-          </div>
         </DialogHeader>
         
         <div className="space-y-4">

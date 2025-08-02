@@ -16,6 +16,8 @@ import { useCreatePool } from "@/hooks/write/useCreatePool";
 import { defaultChain } from "@/lib/get-default-chain";
 import { useAccount, useChainId } from "wagmi";
 import { toast } from "sonner";
+import { ConnectButton } from "thirdweb/react";
+import { thirdwebClient } from "@/lib/thirdweb-client";
 
 interface CreatePoolDialogProps {
   open: boolean;
@@ -276,141 +278,146 @@ export const CreatePoolDialog: React.FC<CreatePoolDialogProps> = ({
         </DialogHeader>
 
         <div className="flex flex-col gap-6 pb-4 pt-2">
-          {/* Connection Status */}
-          {!isConnected && (
-            <div className="bg-gradient-to-r from-yellow-900/30 to-yellow-800/20 border border-yellow-500/40 rounded-xl p-4 shadow-lg">
-              <div className="flex items-center gap-3">
-                <div className="w-3 h-3 bg-yellow-400 rounded-full shadow-lg shadow-yellow-400/30"></div>
-                <span className="text-sm text-yellow-300 font-semibold">
-                  Please connect your wallet first
-                </span>
+          {/* Simple Wallet Connection Check */}
+          {!isConnected ? (
+            <div className="bg-gradient-to-r from-blue-900/30 to-blue-800/20 border border-blue-500/40 rounded-xl p-6 shadow-lg">
+              <div className="text-center space-y-4">
+                <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto">
+                  <AlertTriangle className="w-6 h-6 text-blue-400" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-blue-300 mb-2">
+                    Connect Your Wallet
+                  </h3>
+                  <p className="text-sm text-blue-200 mb-4">
+                    Please connect your wallet to create a new pool
+                  </p>
+                  <ConnectButton client={thirdwebClient} />
+                </div>
               </div>
             </div>
-          )}
-
-          {isConnected && !isChainValid && (
-            <div className="bg-gradient-to-r from-yellow-900/30 to-yellow-800/20 border border-yellow-500/40 rounded-xl p-4 shadow-lg">
-              <div className="flex items-center gap-3">
-                <div className="w-3 h-3 bg-yellow-400 rounded-full shadow-lg shadow-yellow-400/30"></div>
-                <span className="text-sm text-yellow-300 font-semibold">
-                  Please switch to Arbitrum Sepolia (Chain ID: {defaultChain})
-                </span>
+          ) : !isChainValid ? (
+            <div className="bg-gradient-to-r from-yellow-900/30 to-yellow-800/20 border border-yellow-500/40 rounded-xl p-6 shadow-lg">
+              <div className="text-center space-y-4">
+                <div className="w-12 h-12 bg-yellow-500/20 rounded-full flex items-center justify-center mx-auto">
+                  <AlertTriangle className="w-6 h-6 text-yellow-400" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-yellow-300 mb-2">
+                    Switch Network
+                  </h3>
+                  <p className="text-sm text-yellow-200">
+                    Please switch to Arbitrum Sepolia (Chain ID: {defaultChain})
+                  </p>
+                </div>
               </div>
             </div>
+          ) : (
+            <>
+              {/* Token Selection */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-200 mb-2">
+                    Borrow Token
+                  </label>
+                  <Select
+                    value={formData.loanToken}
+                    onValueChange={(value) => updateFormData("loanToken", value)}
+                  >
+                    <SelectTrigger className="w-full bg-gradient-to-r from-gray-800 to-gray-700 border border-gray-600/50 hover:border-blue-400/60 text-gray-100 rounded-xl px-4 py-3 shadow-sm transition-all duration-200 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400">
+                      <SelectValue placeholder="Select borrow token" className="text-gray-200" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-gray-800/95 backdrop-blur-sm border border-gray-600/50 rounded-xl shadow-xl z-[1000] max-h-60">
+                      {tokens.map((token) => (
+                        <SelectItem 
+                          key={token.symbol} 
+                          value={token.symbol}
+                          className="text-gray-200 hover:bg-gray-700/50 focus:bg-gray-700/50 rounded-lg mx-1 my-0.5 transition-colors duration-150"
+                        >
+                          {renderTokenOption(token)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-200 mb-2">
+                    Collateral Token
+                  </label>
+                  <Select
+                    value={formData.collateralToken}
+                    onValueChange={(value) => updateFormData("collateralToken", value)}
+                  >
+                    <SelectTrigger className="w-full bg-gradient-to-r from-gray-800 to-gray-700 border border-gray-600/50 hover:border-blue-400/60 text-gray-100 rounded-xl px-4 py-3 shadow-sm transition-all duration-200 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400">
+                      <SelectValue placeholder="Select collateral token" className="text-gray-200" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-gray-800/95 backdrop-blur-sm border border-gray-600/50 rounded-xl shadow-xl z-[1000] max-h-60">
+                      {tokens.map((token) => (
+                        <SelectItem 
+                          key={token.symbol} 
+                          value={token.symbol}
+                          className="text-gray-200 hover:bg-gray-700/50 focus:bg-gray-700/50 rounded-lg mx-1 my-0.5 transition-colors duration-150"
+                        >
+                          {renderTokenOption(token)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* LTV Input */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-200 mb-2">
+                  LTV Ratio (%)
+                </label>
+                <Input
+                  type="number"
+                  min="1"
+                  max="90"
+                  step="1"
+                  placeholder="80"
+                  value={formData.ltv}
+                  onChange={(e) => updateFormData("ltv", e.target.value)}
+                  className="w-full bg-gradient-to-r from-gray-800 to-gray-700 border border-gray-600/50 hover:border-blue-400/60 focus:border-blue-400 focus:ring-2 focus:ring-blue-500/30 text-gray-100 rounded-xl px-4 py-3 transition-all duration-200"
+                />
+              </div>
+
+              {/* Status Messages */}
+              {renderStatusMessage()}
+
+              {/* Action Buttons */}
+              <div className="flex flex-col md:flex-row justify-end gap-3 mt-4">
+                <Button
+                  variant="outline"
+                  className="border-gray-600 text-gray-300 hover:bg-gray-700 w-full md:w-auto rounded-xl px-6 py-3 transition-all duration-200"
+                  onClick={handleClose}
+                  disabled={isCreating || isConfirming}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="default"
+                  className="w-full md:w-auto bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-semibold py-3 rounded-xl shadow-lg transition-all duration-200 px-6"
+                  onClick={canSubmit ? handleSubmit : undefined}
+                  disabled={!canSubmit}
+                >
+                  {isCreating || isConfirming ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                      Creating Pool...
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="mr-2 w-5 h-5" />
+                      Create Pool
+                    </>
+                  )}
+                </Button>
+              </div>
+            </>
           )}
-
-          {/* Token Selection */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-semibold text-gray-200 mb-2">
-                Borrow Token
-              </label>
-              <Select
-                value={formData.loanToken}
-                onValueChange={(value) => updateFormData("loanToken", value)}
-              >
-                <SelectTrigger className="w-full bg-gradient-to-r from-gray-800 to-gray-700 border border-gray-600/50 hover:border-blue-400/60 text-gray-100 rounded-xl px-4 py-3 shadow-sm transition-all duration-200 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400">
-                  <SelectValue placeholder="Select borrow token" className="text-gray-200" />
-                </SelectTrigger>
-                <SelectContent className="bg-gray-800/95 backdrop-blur-sm border border-gray-600/50 rounded-xl shadow-xl z-[1000] max-h-60">
-                  {tokens.map((token) => (
-                    <SelectItem 
-                      key={token.symbol} 
-                      value={token.symbol}
-                      className="text-gray-200 hover:bg-gray-700/50 focus:bg-gray-700/50 rounded-lg mx-1 my-0.5 transition-colors duration-150"
-                    >
-                      {renderTokenOption(token)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-gray-200 mb-2">
-                Collateral Token
-              </label>
-              <Select
-                value={formData.collateralToken}
-                onValueChange={(value) => updateFormData("collateralToken", value)}
-              >
-                <SelectTrigger className="w-full bg-gradient-to-r from-gray-800 to-gray-700 border border-gray-600/50 hover:border-blue-400/60 text-gray-100 rounded-xl px-4 py-3 shadow-sm transition-all duration-200 focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400">
-                  <SelectValue placeholder="Select collateral token" className="text-gray-200" />
-                </SelectTrigger>
-                <SelectContent className="bg-gray-800/95 backdrop-blur-sm border border-gray-600/50 rounded-xl shadow-xl z-[1000] max-h-60">
-                  {tokens.map((token) => (
-                    <SelectItem 
-                      key={token.symbol} 
-                      value={token.symbol}
-                      className="text-gray-200 hover:bg-gray-700/50 focus:bg-gray-700/50 rounded-lg mx-1 my-0.5 transition-colors duration-150"
-                    >
-                      {renderTokenOption(token)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          {/* LTV Input */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-200 mb-2">
-              LTV Ratio (%)
-            </label>
-            <Input
-              type="number"
-              min="1"
-              max="90"
-              step="1"
-              placeholder="80"
-              value={formData.ltv}
-              onChange={(e) => updateFormData("ltv", e.target.value)}
-              className="w-full bg-gradient-to-r from-gray-800 to-gray-700 border border-gray-600/50 hover:border-blue-400/60 focus:border-blue-400 focus:ring-2 focus:ring-blue-500/30 text-gray-100 rounded-xl px-4 py-3 transition-all duration-200"
-            />
-          </div>
-
-          {/* Status Messages */}
-          {renderStatusMessage()}
-
-          {/* Action Buttons */}
-          <div className="flex flex-col md:flex-row justify-end gap-3 mt-4">
-            <Button
-              variant="outline"
-              className="border-gray-600 text-gray-300 hover:bg-gray-700 w-full md:w-auto rounded-xl px-6 py-3 transition-all duration-200"
-              onClick={handleClose}
-              disabled={isCreating || isConfirming}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="default"
-              className="w-full md:w-auto bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-semibold py-3 rounded-xl shadow-lg transition-all duration-200 px-6"
-              onClick={canSubmit ? handleSubmit : undefined}
-              disabled={!canSubmit}
-            >
-              {!isConnected ? (
-                <>
-                  <AlertTriangle className="mr-2 w-5 h-5" />
-                  Connect Wallet
-                </>
-              ) : !isChainValid ? (
-                <>
-                  <AlertTriangle className="mr-2 w-5 h-5" />
-                  Switch Network
-                </>
-              ) : isCreating || isConfirming ? (
-                <>
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                  Creating Pool...
-                </>
-              ) : (
-                <>
-                  <Plus className="mr-2 w-5 h-5" />
-                  Create Pool
-                </>
-              )}
-            </Button>
-          </div>
         </div>
       </DialogContent>
     </Dialog>

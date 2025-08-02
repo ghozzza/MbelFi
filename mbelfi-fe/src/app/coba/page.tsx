@@ -1,26 +1,16 @@
-"use client";
+"use client"
+import React from 'react'
+import { useReadUserSupplyShares } from '@/hooks/read/useUserSupplyShares'
+import { useReadTotalSupplyAssets } from '@/hooks/read/useTotalSupplyAssets'
+import { useReadTotalBorrowAssets } from '@/hooks/read/useTotalBorrowAssets'
 
-import { createThirdwebClient } from "thirdweb";
-import { useNetworkSwitcherModal } from "thirdweb/react";
-import { base, ethereum, polygon, sepolia, arbitrum } from "thirdweb/chains";
- 
-const client = createThirdwebClient({
- clientId: "6968b5741aff6ae8198c60cd52347a56",
-});
- 
-export default function Example() {
-  const networkSwitcher = useNetworkSwitcherModal();
- 
-  function handleClick() {
-     networkSwitcher.open({
-       client,
-       theme: 'light',
-       sections: [
-         { label: 'Recently used', chains: [arbitrum, polygon] },
-         { label: 'Popular', chains: [base, ethereum, sepolia] },
-       ]
-    });
-  }
- 
-  return <button onClick={handleClick}> Switch Network </button>
+const Page = () => {
+
+  return (
+    <div>
+        <h1>Coba</h1>
+    </div>
+  )
 }
+
+export default Page

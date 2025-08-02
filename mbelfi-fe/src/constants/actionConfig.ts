@@ -33,7 +33,7 @@ export const actionConfig: Record<ActionType, ActionConfig> = {
     inputLabel: "Amount to Supply",
     balanceLabel: "Your Wallet Balance",
     balanceValue: (market: EnrichedPool) =>
-      `1,234.56 ${market.borrowTokenInfo?.symbol || market.borrowToken}`,
+      `Loading... ${market.borrowTokenInfo?.symbol || market.borrowToken}`,
     apyLabel: "APY",
     apyValue: (_market: EnrichedPool) => `-`,
     apyColor: "text-green-400",
@@ -50,7 +50,7 @@ export const actionConfig: Record<ActionType, ActionConfig> = {
     inputLabel: "Amount to Supply",
     balanceLabel: "Your Wallet Balance",
     balanceValue: (market: EnrichedPool) =>
-      `2.5 ${market.collateralTokenInfo?.symbol || market.collateralToken}`,
+      `Loading... ${market.collateralTokenInfo?.symbol || market.collateralToken}`,
     apyLabel: "LTV",
     apyValue: (market: EnrichedPool) =>
       `${(Number(market.ltv) / 1e16).toFixed(2)}%`,
@@ -68,7 +68,7 @@ export const actionConfig: Record<ActionType, ActionConfig> = {
     inputLabel: "Amount to Withdraw",
     balanceLabel: "Your Supplied Balance",
     balanceValue: (market: EnrichedPool) =>
-      `5,000.00 ${market.borrowTokenInfo?.symbol || market.borrowToken}`,
+      `Loading... ${market.borrowTokenInfo?.symbol || market.borrowToken}`,
     apyLabel: "APY",
     apyValue: (_market: EnrichedPool) => `-`,
     apyColor: "text-green-400",
@@ -85,7 +85,7 @@ export const actionConfig: Record<ActionType, ActionConfig> = {
     inputLabel: "Amount to Withdraw",
     balanceLabel: "Your Collateral Balance",
     balanceValue: (market: EnrichedPool) =>
-      `1.5 ${market.collateralTokenInfo?.symbol || market.collateralToken}`,
+      `Loading... ${market.collateralTokenInfo?.symbol || market.collateralToken}`,
     apyLabel: null,
     apyValue: null,
     apyColor: "",
@@ -119,7 +119,7 @@ export const actionConfig: Record<ActionType, ActionConfig> = {
     inputLabel: "Amount to Borrow",
     balanceLabel: "Available to Borrow",
     balanceValue: (market: EnrichedPool) =>
-      `500.00 ${market.borrowTokenInfo?.symbol || market.borrowToken}`,
+      `Loading... ${market.borrowTokenInfo?.symbol || market.borrowToken}`,
     apyLabel: "Borrow APY",
     apyValue: (_market: EnrichedPool) => `-`,
     apyColor: "text-red-400",
