@@ -9,7 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Image from "next/image";
-import { tokens } from "@/constants/token-address";
+import { tokens } from "@/constants/tokenAddress";
 import { defaultChain } from "@/lib/get-default-chain";
 
 interface TokenSelectorProps {

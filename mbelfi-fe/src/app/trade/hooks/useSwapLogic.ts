@@ -10,12 +10,15 @@ import { useTokenCalculator } from "@/hooks/read/useTokenCalculator";
 import { useReadPositionBalance } from "@/hooks/read/useReadPositionBalance";
 import { useReadUserCollateral } from "@/hooks/read/useReadUserCollateral";
 import { defaultChain } from "@/lib/get-default-chain";
-import {
-  getAllLPFactoryData,
-  getSelectedCollateralTokenByLPAddress,
-} from "@/actions/GetLPFactory";
-import { getPositionByOwnerAndLpAddress } from "@/actions/GetPosition";
+import { getMockPools, getMockPoolById } from "@/constants/mockPools";
 import { useReadAddressPosition } from "@/hooks/read/useReadPositionAddress";
+
+function toHexString(address: string): `0x${string}` {
+  if (!address.startsWith("0x")) {
+    throw new Error("Address must start with 0x");
+  }
+  return address as `0x${string}`;
+}
 
 export const useSwapLogic = () => {
   const { address } = useAccount();
@@ -36,13 +39,13 @@ export const useSwapLogic = () => {
   const { addressPosition } = useReadAddressPosition(lpAddressSelected);
   
   const { positionBalance: fromTokenBalance } = useReadPositionBalance(
-    fromToken.addresses[defaultChain] as Address,
-    addressPosition as `0x${string}`
+    fromToken.addresses[defaultChain],
+    addressPosition || ""
   );
   
   const { positionBalance: toTokenBalance } = useReadPositionBalance(
-    toToken.addresses[defaultChain] as Address,
-    addressPosition as `0x${string}`
+    toToken.addresses[defaultChain],
+    addressPosition || ""
   );
 
   const {
@@ -51,7 +54,11 @@ export const useSwapLogic = () => {
     collateralLoading,
     positionError,
     collateralError,
-  } = useReadUserCollateral(selectedCollateralToken, lpAddressSelected);
+  } = useReadUserCollateral(
+    selectedCollateralToken && selectedCollateralToken.startsWith('0x') ? selectedCollateralToken as `0x${string}` : '0x0000000000000000000000000000000000000000' as `0x${string}`,
+    lpAddressSelected && lpAddressSelected.startsWith('0x') ? lpAddressSelected as `0x${string}` : '0x0000000000000000000000000000000000000000' as `0x${string}`,
+    fromToken.decimals
+  );
 
   const {
     price: priceExchangeRate,
@@ -60,7 +67,7 @@ export const useSwapLogic = () => {
   } = useTokenCalculator(
     fromToken.addresses[defaultChain] as Address,
     toToken.addresses[defaultChain] as Address,
-    Number(1),
+    1,
     addressPosition as Address
   );
 
@@ -71,18 +78,18 @@ export const useSwapLogic = () => {
   } = useTokenCalculator(
     fromToken.addresses[defaultChain] as Address,
     toToken.addresses[defaultChain] as Address,
-    Number(fromAmount),
+    Number(fromAmount) || 0,
     addressPosition as Address
   );
 
   const { swapToken, isLoading, error, setError } = useSwapToken({
     fromToken: {
-      address: fromToken.addresses[defaultChain] as Address,
+      address: toHexString(fromToken.addresses[defaultChain]),
       name: fromToken.name,
       decimals: fromToken.decimals,
     },
     toToken: {
-      address: toToken.addresses[defaultChain] as Address,
+      address: toHexString(toToken.addresses[defaultChain]),
       name: toToken.name,
       decimals: toToken.decimals,
     },
@@ -96,7 +103,7 @@ export const useSwapLogic = () => {
       console.error("Swap error:", error);
     },
     positionAddress: addressPosition as `0x${string}`,
-    lpAddress: lpAddressSelected as Address,
+    lendingPoolAddress: lpAddressSelected as `0x${string}`,
   });
 
   // Set mounted state to true after hydration
@@ -106,8 +113,10 @@ export const useSwapLogic = () => {
 
   useEffect(() => {
     const fetchSelectedCollateralToken = async () => {
-      const data = await getSelectedCollateralTokenByLPAddress(lpAddressSelected);
-      setSelectedCollateralToken(data?.collateralToken);
+      if (lpAddressSelected) {
+        const pool = getMockPoolById(lpAddressSelected);
+        setSelectedCollateralToken(pool?.collateralToken || null);
+      }
     };
     fetchSelectedCollateralToken();
   }, [lpAddressSelected]);
@@ -139,7 +148,7 @@ export const useSwapLogic = () => {
         setPositionsArray([]);
         setPositionLength(0);
         setPositionAddress(undefined);
-        const lpAddress = await getAllLPFactoryData();
+        const lpAddress = getMockPools(defaultChain);
         setLpAddress(lpAddress);
       } catch (error) {
         console.error("Error fetching LP address:", error);
@@ -150,19 +159,25 @@ export const useSwapLogic = () => {
   }, []);
 
   useEffect(() => {
-    if (lpAddressSelected) {
+    if (lpAddressSelected && address) {
       const fetchPosition = async () => {
-        const response = await getPositionByOwnerAndLpAddress(
-          address as string,
-          lpAddressSelected
-        );
-        setPositionsArray(response.data);
-        setPositionLength(response.data.length);
+        // Mock position data - in real implementation this would come from API
+        const mockPosition = {
+          data: [{
+            id: "mock-position-1",
+            address: address as `0x${string}`,
+            lpAddress: lpAddressSelected,
+            collateralAmount: "1000000000000000000", // 1 token in wei
+            borrowAmount: "500000000000000000", // 0.5 token in wei
+          }]
+        };
+        setPositionsArray(mockPosition.data);
+        setPositionLength(mockPosition.data.length);
         setPositionAddress(undefined);
       };
       fetchPosition();
     }
-  }, [lpAddressSelected]);
+  }, [lpAddressSelected, address]);
 
   // Utility functions
   const tokenName = (address: string) => {
@@ -173,6 +188,18 @@ export const useSwapLogic = () => {
   const tokenLogo = (address: string) => {
     const token = tokens.find((token) => token.addresses[defaultChain] === address);
     return token?.logo;
+  };
+
+  const formatBalance = (
+    name: string,
+    tokenAddress: string,
+    decimals: number,
+    tokenBalance: number
+  ) => {
+    const formattedBalance = name === tokenName(tokenAddress)
+      ? (tokenBalance / 10 ** decimals).toFixed(6)
+      : tokenBalance.toString();
+    return `${formattedBalance} ${name}`;
   };
 
   const switchTokens = () => {
@@ -324,6 +351,7 @@ export const useSwapLogic = () => {
     priceExchangeRate,
     isLoading,
     error,
+    address,
     
     // Setters
     setFromToken,
@@ -336,6 +364,7 @@ export const useSwapLogic = () => {
     // Functions
     tokenName,
     tokenLogo,
+    formatBalance,
     switchTokens,
     formatExchangeRate,
     handleSwap,
