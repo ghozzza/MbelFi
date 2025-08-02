@@ -1,2 +1,9 @@
+ignoredBuiltDependencies:
+  - bufferutil
+  - keccak
+  - sharp
+  - utf-8-validate
+
 onlyBuiltDependencies:
+  - '@tailwindcss/oxide'
   - esbuild

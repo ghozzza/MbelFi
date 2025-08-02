@@ -5,6 +5,8 @@ import { Copy } from "lucide-react";
 import { EnrichedPool } from "@/lib/pair-token-address";
 import { useSupplyCollateral } from "@/hooks/write/useSupplyCollateral";
 import { useSupplyLiquidity } from "@/hooks/write/useSupplyLiquidity";
+import { useWithdrawCollateral } from "@/hooks/write/useWithdrawCollateral";
+import { useWithdrawLiquidity } from "@/hooks/write/useWithdrawLiquidity";
 import { useApprove } from "@/hooks/write/useApprove";
 import { useBorrow } from "@/hooks/write/useBorrow";
 import { toast } from "sonner";
@@ -104,6 +106,34 @@ export function ActionModalView({
     toChain?.id
   );
 
+  const {
+    setAmount: setWithdrawCollateralAmount,
+    handleWithdrawCollateral,
+    isWithdrawing: isWithdrawingCollateral,
+    isConfirming: isWithdrawCollateralConfirming,
+    isSuccess: isWithdrawCollateralSuccess,
+    isError: isWithdrawCollateralError,
+    txHash: withdrawCollateralTxHash,
+    writeError: withdrawCollateralWriteError,
+    confirmError: withdrawCollateralConfirmError,
+  } = useWithdrawCollateral(chainId, tokenDecimals, () => {
+    setAmount("");
+  });
+
+  const {
+    setShares: setWithdrawLiquidityShares,
+    handleWithdrawLiquidity,
+    isWithdrawing: isWithdrawingLiquidity,
+    isConfirming: isWithdrawLiquidityConfirming,
+    isSuccess: isWithdrawLiquiditySuccess,
+    isError: isWithdrawLiquidityError,
+    txHash: withdrawLiquidityTxHash,
+    writeError: withdrawLiquidityWriteError,
+    confirmError: withdrawLiquidityConfirmError,
+  } = useWithdrawLiquidity(chainId, tokenDecimals, () => {
+    setAmount("");
+  });
+
   const config = actionConfig[type];
 
   // Handle amount change
@@ -117,6 +147,12 @@ export function ActionModalView({
       const amountToSet = value === "max" ? "1000" : value;
       setApproveAmount(amountToSet);
       setSupplyLiquidityAmount(amountToSet);
+    } else if (type === "withdraw_collateral") {
+      const amountToSet = value === "max" ? "1.5" : value;
+      setWithdrawCollateralAmount(amountToSet);
+    } else if (type === "withdraw_liquidity") {
+      const sharesToSet = value === "max" ? "5000" : value;
+      setWithdrawLiquidityShares(sharesToSet);
     } else if (type === "borrow") {
       const amountToSet = value === "max" ? "500" : value;
       setBorrowAmount(amountToSet);
@@ -181,6 +217,28 @@ export function ActionModalView({
           } failed`
         );
       }
+    } else if (type === "withdraw_collateral") {
+      if (!market?.id) {
+        toast.error("No lending pool address found");
+        return;
+      }
+
+      try {
+        await handleWithdrawCollateral(market.id as `0x${string}`);
+      } catch (error) {
+        toast.error("Withdraw collateral failed");
+      }
+    } else if (type === "withdraw_liquidity") {
+      if (!market?.id) {
+        toast.error("No lending pool address found");
+        return;
+      }
+
+      try {
+        await handleWithdrawLiquidity(market.id as `0x${string}`);
+      } catch (error) {
+        toast.error("Withdraw liquidity failed");
+      }
     } else if (type === "borrow") {
       if (!market?.id) {
         toast.error("No lending pool address found");
@@ -216,6 +274,20 @@ export function ActionModalView({
         isApproveConfirming ||
         isConfirming
       );
+    } else if (type === "withdraw_collateral") {
+      return (
+        !amount ||
+        parseFloat(amount) <= 0 ||
+        isWithdrawingCollateral ||
+        isWithdrawCollateralConfirming
+      );
+    } else if (type === "withdraw_liquidity") {
+      return (
+        !amount ||
+        parseFloat(amount) <= 0 ||
+        isWithdrawingLiquidity ||
+        isWithdrawLiquidityConfirming
+      );
     } else if (type === "borrow") {
       return (
         !amount ||
@@ -242,6 +314,22 @@ export function ActionModalView({
       }
       if (!isApproved) {
         return "Approve";
+      }
+      return config.buttonText;
+    } else if (type === "withdraw_collateral") {
+      if (isWithdrawingCollateral) {
+        return "Withdrawing...";
+      }
+      if (isWithdrawCollateralConfirming) {
+        return "Confirming...";
+      }
+      return config.buttonText;
+    } else if (type === "withdraw_liquidity") {
+      if (isWithdrawingLiquidity) {
+        return "Withdrawing...";
+      }
+      if (isWithdrawLiquidityConfirming) {
+        return "Confirming...";
       }
       return config.buttonText;
     } else if (type === "borrow") {
@@ -334,6 +422,8 @@ export function ActionModalView({
       {/* Transaction Status Section */}
       {(type === "supply_collateral" ||
         type === "supply_liquidity" ||
+        type === "withdraw_collateral" ||
+        type === "withdraw_liquidity" ||
         type === "borrow") && (
         <div className="space-y-4">
           {/* Approval Transaction Status */}
@@ -370,6 +460,32 @@ export function ActionModalView({
                 }
               />
             )}
+
+          {/* Withdraw Collateral Transaction Status */}
+          {type === "withdraw_collateral" && withdrawCollateralTxHash && (
+            <TransactionStatus
+              type="withdraw"
+              txHash={withdrawCollateralTxHash}
+              chainId={chainId}
+              isConfirming={isWithdrawCollateralConfirming}
+              isSuccess={isWithdrawCollateralSuccess}
+              isError={isWithdrawCollateralError}
+              errorMessage={withdrawCollateralWriteError?.message || withdrawCollateralConfirmError?.message}
+            />
+          )}
+
+          {/* Withdraw Liquidity Transaction Status */}
+          {type === "withdraw_liquidity" && withdrawLiquidityTxHash && (
+            <TransactionStatus
+              type="withdraw"
+              txHash={withdrawLiquidityTxHash}
+              chainId={chainId}
+              isConfirming={isWithdrawLiquidityConfirming}
+              isSuccess={isWithdrawLiquiditySuccess}
+              isError={isWithdrawLiquidityError}
+              errorMessage={withdrawLiquidityWriteError?.message || withdrawLiquidityConfirmError?.message}
+            />
+          )}
 
           {/* Borrow Transaction Status */}
           {type === "borrow" && borrowTxHash && (

@@ -2,7 +2,7 @@ import { ExternalLink } from "lucide-react";
 import { getBlockExplorerUrl } from "@/lib/utils/blockExplorer";
 
 interface TransactionStatusProps {
-  type: "approve" | "supply" | "borrow";
+  type: "approve" | "supply" | "borrow" | "withdraw";
   txHash?: string;
   chainId: number;
   isConfirming: boolean;
@@ -59,6 +59,18 @@ export const TransactionStatus: React.FC<TransactionStatusProps> = ({
             : isSuccess
             ? "Borrow Successful ✓"
             : "Borrow Pending",
+        };
+      case "withdraw":
+        return {
+          bgColor: "from-orange-900/30 to-orange-800/20",
+          borderColor: "border-orange-500/40",
+          dotColor: "bg-orange-400",
+          textColor: "text-orange-300",
+          status: isConfirming
+            ? "Withdrawing..."
+            : isSuccess
+            ? "Withdraw Successful ✓"
+            : "Withdraw Pending",
         };
     }
   };
