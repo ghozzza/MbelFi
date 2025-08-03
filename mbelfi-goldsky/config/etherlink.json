@@ -1,0 +1,8 @@
+{
+  "network": "etherlink-testnet",
+  "factoryAddress": "0x86CA4a34eB2C11F7406220E402cc689bb811C0CD",
+  "poolAddress": "0xb4F8A55030a9e2b3B52d6267223915846eB2d3EC",
+  "startBlock": 20856651,
+  "factoryFile": "LendingPoolFactory",
+  "poolFile": "LendingPool"
+}

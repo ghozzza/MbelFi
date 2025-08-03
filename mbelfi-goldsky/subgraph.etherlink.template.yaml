@@ -1,0 +1,63 @@
+specVersion: 0.0.2
+description: Lending Pool Subgraph for Etherlink
+repository: 
+schema:
+  file: ./schema.lending.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: LendingPoolFactory
+    network: {{ network }}
+    source:
+      address: "{{ factoryAddress }}"
+      abi: LendingPoolFactory
+      startBlock: {{ startBlock }}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - LendingPool
+        - LendingPoolCreated
+      abis:
+        - name: LendingPoolFactory
+          file: ./abis/{{ factoryFile }}.json
+        - name: LendingPool
+          file: ./abis/{{ poolFile }}.json
+      eventHandlers:
+        - event: LendingPoolCreated(indexed address,indexed address,indexed address,uint256)
+          handler: handlePoolCreated
+      file: ./src/lending-mapping.ts
+templates:
+  - kind: ethereum/contract
+    name: LendingPool
+    network: {{ network }}
+    source:
+      abi: LendingPool
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - SupplyLiquidity
+        - WithdrawLiquidity
+        - BorrowDebtCrosschain
+        - RepayWithCollateralByPosition
+        - SupplyCollateral
+        - CreatePosition
+      abis:
+        - name: LendingPool
+          file: ./abis/{{ poolFile }}.json
+      eventHandlers:
+        - event: SupplyLiquidity(indexed address,uint256,uint256)
+          handler: handleSupplyLiquidity
+        - event: WithdrawLiquidity(indexed address,uint256,uint256)
+          handler: handleWithdrawLiquidity
+        - event: BorrowDebtCrosschain(indexed address,uint256,uint256,indexed uint256,indexed address)
+          handler: handleBorrowDebtCrosschain
+        - event: RepayWithCollateralByPosition(indexed address,uint256,uint256)
+          handler: handleRepayWithCollateralByPosition
+        - event: SupplyCollateral(indexed address,uint256)
+          handler: handleSupplyCollateral
+        - event: CreatePosition(indexed address,indexed address)
+          handler: handleCreatePosition
+      file: ./src/lending-mapping.ts

@@ -16,6 +16,7 @@ import {HelperTestnet} from "../../src/hyperlane/HelperTestnet.sol";
 import {IsHealthy} from "../../src/hyperlane/IsHealthy.sol";
 import {Protocol} from "../../src/hyperlane/Protocol.sol";
 import {Pricefeed} from "../../src/hyperlane/Pricefeed.sol";
+import {HelperUtils} from "../../src/hyperlane/HelperUtils.sol";
 
 contract LendingPoolFactoryHyperlaneTest is Test {
     IsHealthy public isHealthy;
@@ -31,6 +32,7 @@ contract LendingPoolFactoryHyperlaneTest is Test {
     Protocol public protocol;
     HelperTestnet public helperTestnet;
     Pricefeed public pricefeed;
+    HelperUtils public helperUtils;
 
     address public owner = makeAddr("owner");
 
@@ -58,7 +60,6 @@ contract LendingPoolFactoryHyperlaneTest is Test {
         lendingPoolDeployer = new LendingPoolDeployer();
         protocol = new Protocol();
         helperTestnet = new HelperTestnet();
-
         usdc = new MockUSDC(address(helperTestnet));
         usdt = new MockUSDT(address(helperTestnet));
         wbtc = new MockWBTC(address(helperTestnet));
@@ -70,6 +71,8 @@ contract LendingPoolFactoryHyperlaneTest is Test {
         );
         lendingPool = new LendingPool(address(weth), address(usdc), address(lendingPoolFactory), 7e17);
         position = new Position(address(weth), address(usdc), address(lendingPool), address(lendingPoolFactory));
+
+        helperUtils = new HelperUtils(address(lendingPoolFactory));
 
         pricefeed = new Pricefeed(address(usdc));
         pricefeed.setPrice(1e8);
@@ -642,5 +645,95 @@ contract LendingPoolFactoryHyperlaneTest is Test {
         vm.warp(block.timestamp + 365 days);
         lendingPool.accrueInterest();
         assertEq(lendingPool.totalSupplyAssets(), 1050e6);
+    }
+
+    // RUN
+    // forge test -vvvv --match-test test_getMaxBorrowAmount
+    function test_getMaxBorrowAmount() public {
+        vm.startPrank(alice);
+        IERC20(address(usdc)).approve(address(lendingPool), 10_000e6);
+        lendingPool.supplyLiquidity(10_000e6);
+        vm.stopPrank();
+
+        vm.startPrank(bob);
+        IERC20(address(weth)).approve(address(lendingPool), 1e18);
+        lendingPool.supplyCollateral(1e18);
+        lendingPool.borrowDebt(500e6, chainId, 0);
+        vm.stopPrank();
+
+        uint256 maxBorrowAmount = helperUtils.getMaxBorrowAmount(address(lendingPool), address(bob));
+        console.log("maxBorrowAmount", maxBorrowAmount / 1e6); // divided by decimals borrow token
+    }
+
+    // RUN
+    // forge test -vvvv --match-test test_getExchangeRate
+    function test_getExchangeRate() public {
+        vm.startPrank(bob);
+        uint256 exchangeRate =
+            helperUtils.getExchangeRate(address(weth), address(usdc), 1e18, lendingPool.addressPositions(bob));
+        console.log("exchangeRate", exchangeRate);
+        vm.stopPrank();
+    }
+
+    // RUN
+    // forge test -vvvv --match-test test_getTokenValue
+    function test_getTokenValue() public view {
+        uint256 tokenValue = helperUtils.getTokenValue(address(weth));
+        console.log("tokenValue", tokenValue);
+    }
+
+    // RUN
+    // forge test -vvvv --match-test test_getHealthFactor
+    function test_getHealthFactor() public {
+        vm.startPrank(alice);
+        IERC20(address(usdc)).approve(address(lendingPool), 10_000e6);
+        lendingPool.supplyLiquidity(10_000e6);
+        vm.stopPrank();
+
+        vm.startPrank(bob);
+        IERC20(address(weth)).approve(address(lendingPool), 1e18);
+        lendingPool.supplyCollateral(1e18);
+        lendingPool.borrowDebt(2000e6, chainId, 0);
+        uint256 healthFactor = helperUtils.getHealthFactor(address(lendingPool));
+        console.log("healthFactor", healthFactor);
+        vm.stopPrank();
+    }
+
+    // RUN
+    // forge test -vvvv --match-test test_getSupplyAPY
+    function test_getSupplyAPY() public {
+        vm.startPrank(alice);
+        IERC20(address(usdc)).approve(address(lendingPool), 10_000e6);
+        lendingPool.supplyLiquidity(10_000e6);
+        vm.stopPrank();
+
+        vm.startPrank(bob);
+        IERC20(address(weth)).approve(address(lendingPool), 1e18);
+        lendingPool.supplyCollateral(1e18);
+        lendingPool.borrowDebt(1000e6, chainId, 0);
+        vm.warp(block.timestamp + 365 days);
+        lendingPool.borrowDebt(100e6, chainId, 0);
+        uint256 supplyAPY = helperUtils.getSupplyAPY(address(lendingPool));
+        console.log("supplyAPY", supplyAPY);
+        vm.stopPrank();
+    }
+    // RUN
+    // forge test -vvv --match-test test_getTVL
+    function test_getTVL() public {
+        // vm.startPrank(alice);
+        // IERC20(address(usdc)).approve(address(lendingPool), 10_000e6);
+        // lendingPool.supplyLiquidity(10_000e6);
+        // vm.stopPrank();
+
+        vm.startPrank(bob);
+        IERC20(address(weth)).approve(address(lendingPool), 1e18);
+        lendingPool.supplyCollateral(1e18);
+        // lendingPool.borrowDebt(1000e6, chainId, 0);
+        vm.stopPrank();
+
+        address[] memory lendingPoolAddresses = new address[](1);
+        lendingPoolAddresses[0] = address(lendingPool);
+        uint256 TVL = helperUtils.getTVL(lendingPoolAddresses);
+        console.log("TVL", TVL);
     }
 }

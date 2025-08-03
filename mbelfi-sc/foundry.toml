@@ -2,6 +2,7 @@
 src = "src"
 out = "out"
 libs = ['node_modules', 'lib']
+remappings=[]
 viaIR = true
 optimizer = true
 optimizer_runs = 200
