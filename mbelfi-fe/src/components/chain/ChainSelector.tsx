@@ -25,8 +25,8 @@ export const ChainSelector: React.FC<ChainSelectorProps> = ({
   const availableChains = isBorrowMode 
     ? chains.filter(chain => 
         chain.name === "Etherlink Testnet" || 
-        chain.name === "Base" || 
-        chain.name === "Arbitrum"
+        chain.name === "Base Sepolia" || 
+        chain.name === "Arbitrum Sepolia"
       )
     : chains;
 

@@ -42,9 +42,9 @@ export const tokens: Token[] = [
     },
   },
   {
-    name: "XTZ",
-    symbol: "XTZ",
-    logo: "/token/wavax.png",
+    name: "WXTZ",
+    symbol: "WXTZ",
+    logo: "/token/xtzlogo.webp",
     decimals: 18,
     addresses: {
       11155111: "0x4314bb3ad93206ee8f7f18dbcc49943366503bbf",
@@ -102,3 +102,5 @@ export const tokens: Token[] = [
     },
   },
 ];
+
+export const helperAddress = "0x1788042Ef20a790c27758255159D7E815A755320";

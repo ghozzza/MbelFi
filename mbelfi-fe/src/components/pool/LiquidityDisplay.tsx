@@ -2,6 +2,7 @@ import React from "react";
 import { useReadTotalSupplyAssets } from "@/hooks/read/useTotalSupplyAssets";
 import { tokens } from "@/constants/tokenAddress";
 import { useChainId } from "wagmi";
+import { Spinner } from "@/components/ui/spinner";
 
 interface LiquidityDisplayProps {
   lendingPoolAddress: string;
@@ -30,7 +31,8 @@ export const LiquidityDisplay: React.FC<LiquidityDisplayProps> = ({
 
   if (totalSupplyAssetsLoading) {
     return (
-      <div className="text-center text-gray-400 text-sm">
+      <div className="text-center text-gray-400 text-sm flex items-center justify-center gap-2">
+        <Spinner size="sm" className="text-gray-400" />
         Loading...
       </div>
     );

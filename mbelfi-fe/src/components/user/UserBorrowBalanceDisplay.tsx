@@ -1,9 +1,11 @@
 import React from "react";
 import { useReadUserBorrowShares } from "@/hooks/read/useUserBorrowShares";
 import { useReadTotalSupplyAssets } from "@/hooks/read/useTotalSupplyAssets";
+import { useReadMaxUserBorrow } from "@/hooks/read/useReadMaxUserBorrow";
 import { tokens } from "@/constants/tokenAddress";
 import { useChainId } from "wagmi";
 import { EnrichedPool } from "@/lib/pair-token-address";
+import { Spinner } from "@/components/ui/spinner";
 
 interface UserBorrowBalanceDisplayProps {
   market: EnrichedPool;
@@ -45,11 +47,28 @@ export const UserBorrowBalanceDisplay: React.FC<UserBorrowBalanceDisplayProps> =
     tokenDecimals
   );
 
-  // Calculate available to borrow (70% of total supply assets)
+  // Get max user borrow amount from contract
+  const {
+    maxUserBorrow,
+    isLoadingMaxUserBorrow,
+    refetchMaxUserBorrow,
+  } = useReadMaxUserBorrow(
+    market.id as `0x${string}`,
+    tokenDecimals
+  );
+
+  // Use max user borrow amount if available, otherwise fallback to 70% of total supply assets
   const availableToBorrow = React.useMemo(() => {
+    if (maxUserBorrow !== undefined && maxUserBorrow !== null) {
+      // Parse the raw value from contract with proper decimals
+      const rawValue = Number(maxUserBorrow);
+      const parsedValue = rawValue / Math.pow(10, tokenDecimals);
+      return parsedValue;
+    }
+    // Fallback to 70% of total supply assets if max user borrow is not available
     if (totalSupplyAssetsParsed === 0) return 0;
     return totalSupplyAssetsParsed * 0.7; // 70% of total supply assets
-  }, [totalSupplyAssetsParsed]);
+  }, [maxUserBorrow, totalSupplyAssetsParsed, tokenDecimals]);
 
   const availableToBorrowFormatted = React.useMemo(() => {
     if (availableToBorrow === 0) return "0";
@@ -67,16 +86,17 @@ export const UserBorrowBalanceDisplay: React.FC<UserBorrowBalanceDisplayProps> =
       return availableToBorrow.toFixed(2).replace(/\.?0+$/, '');
     }
     
-    return availableToBorrow.toLocaleString('en-US', {
+    return availableToBorrow.toLocaleString('de-DE', {
       minimumFractionDigits: 0,
       maximumFractionDigits: 2
     });
   }, [availableToBorrow]);
 
-  if (userBorrowSharesLoading || totalSupplyAssetsLoading) {
+  if (userBorrowSharesLoading || totalSupplyAssetsLoading || isLoadingMaxUserBorrow) {
     return (
-      <span className={`font-semibold text-white ${className}`}>
-        Loading... {market.borrowTokenInfo?.symbol || market.borrowToken}
+      <span className={`font-semibold text-white ${className} flex items-center gap-2`}>
+        <Spinner size="sm" className="text-white" />
+        {market.borrowTokenInfo?.symbol || market.borrowToken}
       </span>
     );
   }

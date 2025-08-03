@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { chains } from "@/constants/chainAddress";
 import { lendingPoolAbi } from "@/lib/abis/lendingPoolAbi";
 import { useReadTotalSupplyAssets } from "@/hooks/read/useTotalSupplyAssets";
+import { useReadMaxUserBorrow } from "@/hooks/read/useReadMaxUserBorrow";
 
 export type HexAddress = `0x${string}`;
 
@@ -30,8 +31,20 @@ export const useBorrow = (chainId: number, decimals: number, onSuccess: () => vo
     decimals
   );
 
-  // Calculate available to borrow (70% of total supply assets)
-  const availableToBorrow = totalSupplyAssetsParsed * 0.7;
+  // Get max user borrow amount from contract
+  const {
+    maxUserBorrow,
+    isLoadingMaxUserBorrow,
+    refetchMaxUserBorrow,
+  } = useReadMaxUserBorrow(
+    lendingPoolAddress || "0x0000000000000000000000000000000000000000" as HexAddress,
+    decimals
+  );
+
+  // Use max user borrow amount if available, otherwise fallback to 70% of total supply assets
+  const maxBorrowAmount = maxUserBorrow !== undefined && maxUserBorrow !== null 
+    ? Number(maxUserBorrow) 
+    : totalSupplyAssetsParsed * 0.7;
 
   const {
     writeContractAsync,
@@ -161,7 +174,7 @@ export const useBorrow = (chainId: number, decimals: number, onSuccess: () => vo
     // This is just a backup validation
 
     // Validate against available borrow amount
-    if (totalSupplyAssetsLoading) {
+    if (totalSupplyAssetsLoading || isLoadingMaxUserBorrow) {
       toast.error("Loading pool data, please try again", {
         style: {
           background: 'rgba(239, 68, 68, 0.1)',
@@ -190,18 +203,38 @@ export const useBorrow = (chainId: number, decimals: number, onSuccess: () => vo
     }
 
     const borrowAmount = parseFloat(amount);
-    if (borrowAmount > availableToBorrow) {
-      toast.error(`Borrow amount exceeds available limit. Maximum available: ${availableToBorrow.toFixed(2)}`, {
-        style: {
-          background: 'rgba(239, 68, 68, 0.1)',
-          backdropFilter: 'blur(10px)',
-          border: '1px solid rgba(239, 68, 68, 0.3)',
-          color: '#fca5a5',
-          borderRadius: '12px',
-          boxShadow: '0 8px 32px rgba(239, 68, 68, 0.1)'
-        }
-      });
-      return;
+    
+    // Check if max borrow data is available
+    if (maxUserBorrow !== undefined && maxUserBorrow !== null) {
+      const maxBorrowFromContract = Number(maxUserBorrow);
+      if (borrowAmount > maxBorrowFromContract) {
+        toast.error(`Borrow amount exceeds your maximum borrow limit. Maximum available: ${maxBorrowFromContract.toFixed(2)}`, {
+          style: {
+            background: 'rgba(239, 68, 68, 0.1)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(239, 68, 68, 0.3)',
+            color: '#fca5a5',
+            borderRadius: '12px',
+            boxShadow: '0 8px 32px rgba(239, 68, 68, 0.1)'
+          }
+        });
+        return;
+      }
+    } else {
+      // Fallback validation using maxBorrowAmount (70% of total supply assets)
+      if (borrowAmount > maxBorrowAmount) {
+        toast.error(`Borrow amount exceeds available limit. Maximum available: ${maxBorrowAmount.toFixed(2)}`, {
+          style: {
+            background: 'rgba(239, 68, 68, 0.1)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(239, 68, 68, 0.3)',
+            color: '#fca5a5',
+            borderRadius: '12px',
+            boxShadow: '0 8px 32px rgba(239, 68, 68, 0.1)'
+          }
+        });
+        return;
+      }
     }
 
     try {
@@ -259,7 +292,8 @@ export const useBorrow = (chainId: number, decimals: number, onSuccess: () => vo
     txHash: txHash || successTxHash,
     writeError,
     confirmError,
-    availableToBorrow,
+    maxBorrowAmount,
+    isLoadingMaxUserBorrow,
     totalSupplyAssetsLoading,
     totalSupplyAssetsError,
   };

@@ -12,6 +12,10 @@ import {
 } from "@/lib/pair-token-address";
 import { DetailsModal } from "@/components/dialog/details-modal";
 import { LiquidityDisplay } from "@/components/pool/LiquidityDisplay";
+import { StatsCard } from "@/components/home/StatsCard";
+import { PoolSelector } from "@/components/home/PoolSelector";
+import { PositionAddress } from "@/components/home/PositionAddress";
+import { TokenTable } from "@/components/home/TokenTable";
 
 const DesktopView = () => {
   const [isMobile, setIsMobile] = React.useState(false);
@@ -22,6 +26,9 @@ const DesktopView = () => {
   const [pools, setPools] = React.useState<EnrichedPool[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
+  const [selectedPool, setSelectedPool] = React.useState<EnrichedPool | null>(
+    null
+  );
 
   React.useEffect(() => {
     setIsMobile(window.innerWidth < 768);
@@ -48,9 +55,20 @@ const DesktopView = () => {
     fetchPools();
   }, [fetchPools]);
 
+  // Auto-select first pool when pools are loaded
+  React.useEffect(() => {
+    if (pools.length > 0 && !selectedPool) {
+      setSelectedPool(pools[0]);
+    }
+  }, [pools, selectedPool]);
+
   const handleOpenDetails = (market: EnrichedPool) => {
     setSelectedMarket(market);
     setDetailsOpen(true);
+  };
+
+  const handleSelectPool = (pool: EnrichedPool) => {
+    setSelectedPool(pool);
   };
 
   const handleCloseDetails = () => {
@@ -70,21 +88,38 @@ const DesktopView = () => {
         onClose={() => setCreatePoolOpen(false)}
         onPoolCreated={fetchPools}
       />
+
       <div className="flex flex-col gap-4 w-full mx-auto">
-        <Card className="border border-cyan-800 py-2 w-full max-w-full bg-gray-900 text-gray-100 shadow-xl">
-          <CardContent className="w-full flex flex-row mx-auto px-6 py-3 justify-between items-center">
-            <div className="flex flex-col items-center">
-              <span className="text-gray-400 text-sm font-medium">Your Collateral</span>
-              <span className="text-blue-400 font-bold text-lg">1 WETH</span>
+        {/* Stats Card - Dinamis berdasarkan pool yang dipilih */}
+        <StatsCard pool={selectedPool} />
+
+        {/* Pool Header dengan Selector */}
+        <Card className="w-full max-w-full bg-gray-900 text-gray-100 shadow-xl border border-cyan-800">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="text-2xl">💰</div>
+                <h2 className="text-xl font-bold text-white">Lending Pool</h2>
+              </div>
+              <PoolSelector
+                pools={pools}
+                selectedPool={selectedPool}
+                loading={loading}
+                onSelectPool={handleSelectPool}
+              />
             </div>
-            <div className="flex flex-col items-center">
-              <span className="text-gray-400 text-sm font-medium">Your Borrow</span>
-              <span className="text-green-400 font-bold text-lg">$0</span>
-            </div>
-            <div className="flex flex-col items-center">
-              <span className="text-gray-400 text-sm font-medium">Total Value</span>
-              <span className="text-cyan-400 font-bold text-lg">$1,234</span>
-            </div>
+            {selectedPool && (
+              <>
+                <PositionAddress pool={selectedPool} />
+              </>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Token Table */}
+        <Card className="w-full max-w-full bg-gray-900 text-gray-100 shadow-xl border border-cyan-800">
+          <CardContent className="p-6">
+            <TokenTable pool={selectedPool} />
           </CardContent>
         </Card>
 
@@ -145,7 +180,10 @@ const DesktopView = () => {
                       <tr
                         key={pool.id}
                         className="bg-gray-900 border-b border-cyan-800 cursor-pointer hover:bg-gray-800 transition-colors"
-                        onClick={() => handleOpenDetails(pool)}
+                        onClick={() => {
+                          handleSelectPool(pool);
+                          handleOpenDetails(pool);
+                        }}
                       >
                         <td className="text-gray-100 text-center px-4 py-3">
                           <div className="flex items-center space-x-2 justify-center">

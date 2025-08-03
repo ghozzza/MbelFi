@@ -3,6 +3,7 @@ import { useReadUserSupplyShares } from "@/hooks/read/useUserSupplyShares";
 import { tokens } from "@/constants/tokenAddress";
 import { useChainId } from "wagmi";
 import { EnrichedPool } from "@/lib/pair-token-address";
+import { Spinner } from "@/components/ui/spinner";
 
 interface UserSupplyBalanceDisplayProps {
   market: EnrichedPool;
@@ -36,8 +37,9 @@ export const UserSupplyBalanceDisplay: React.FC<UserSupplyBalanceDisplayProps> =
 
   if (sharesLoading) {
     return (
-      <span className={`font-semibold text-white ${className}`}>
-        Loading... {market.borrowTokenInfo?.symbol || market.borrowToken}
+      <span className={`font-semibold text-white ${className} flex items-center gap-2`}>
+        <Spinner size="sm" className="text-white" />
+        {market.borrowTokenInfo?.symbol || market.borrowToken}
       </span>
     );
   }

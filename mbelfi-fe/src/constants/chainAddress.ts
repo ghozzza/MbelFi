@@ -37,7 +37,7 @@ export const chains: Chain[] = [
 
   {
     id: 421614,
-    name: "Arbitrum",
+    name: "Arbitrum Sepolia",
     logo: "/chain/arbitrum.png",
     color: "bg-purple-600",
     destination: 2,
@@ -53,7 +53,7 @@ export const chains: Chain[] = [
   },
   {
     id: 84532,
-    name: "Base",
+    name: "Base Sepolia",
     logo: "/chain/base.png",
     color: "bg-red-500",
     destination: 3,

@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { ConnectButton } from "thirdweb/react";
 import { thirdwebClient } from "@/lib/thirdweb-client";
+import { NetworkSwitcherDialog } from "./network/NetworkSwitcherDialog";
 
 export const NavbarNeon = () => {
   const pathname = usePathname();
@@ -92,7 +93,10 @@ export const NavbarNeon = () => {
                 {item.label}
               </Link>
             ))}
-            <ConnectButton client={thirdwebClient} />
+            <div className="flex items-center gap-3">
+              <NetworkSwitcherDialog variant="button" />
+              <ConnectButton client={thirdwebClient} />
+            </div>
           </div>
 
           <button
@@ -133,7 +137,14 @@ export const NavbarNeon = () => {
                   {item.label}
                 </Link>
               ))}
-              <ConnectButton client={thirdwebClient} />
+              <div className="space-y-3">
+                <div className="px-4 py-2">
+                  <NetworkSwitcherDialog variant="icon" />
+                </div>
+                <div className="px-4">
+                  <ConnectButton client={thirdwebClient} />
+                </div>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

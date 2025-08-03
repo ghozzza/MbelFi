@@ -1,8 +1,7 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Search, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { CreatePoolDialog } from "@/components/dialog/create-pool";
 import { DetailsModal } from "@/components/dialog/details-modal";
 import { getPools } from "@/lib/get-pools";
@@ -12,12 +11,19 @@ import {
 } from "@/lib/pair-token-address";
 import Image from "next/image";
 import { LiquidityDisplay } from "@/components/pool/LiquidityDisplay";
+import { StatsCard } from "@/components/home/StatsCard";
+import { PoolSelector } from "@/components/home/PoolSelector";
+import { PositionAddress } from "@/components/home/PositionAddress";
+import { TokenTable } from "@/components/home/TokenTable";
 
 const MobileView = () => {
   const [createPoolOpen, setCreatePoolOpen] = React.useState(false);
   const [detailsOpen, setDetailsOpen] = React.useState(false);
   const [selectedMarket, setSelectedMarket] =
     React.useState<EnrichedPool | null>(null);
+  const [selectedPool, setSelectedPool] = React.useState<EnrichedPool | null>(
+    null
+  );
   const [pools, setPools] = React.useState<EnrichedPool[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
@@ -40,9 +46,20 @@ const MobileView = () => {
     fetchPools();
   }, [fetchPools]);
 
+  // Auto-select first pool when pools are loaded
+  React.useEffect(() => {
+    if (pools.length > 0 && !selectedPool) {
+      setSelectedPool(pools[0]);
+    }
+  }, [pools, selectedPool]);
+
   const handleOpenDetails = (market: EnrichedPool) => {
     setSelectedMarket(market);
     setDetailsOpen(true);
+  };
+
+  const handleSelectPool = (pool: EnrichedPool) => {
+    setSelectedPool(pool);
   };
 
   const handleCloseDetails = () => {
@@ -64,130 +81,152 @@ const MobileView = () => {
       />
 
       <div className="w-full max-w-4xl space-y-4">
-        <div className="flex flex-col bg-gray-900 border border-gray-700 rounded-xl shadow-xl px-2 py-4 space-y-4">
-          <h2 className="text-2xl font-bold text-blue-400">Pool Overview</h2>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <Input
-              placeholder="Search pools..."
-              className="w-full pl-10 bg-gray-700 border-gray-600 text-sm hover:border-blue-500 text-gray-100"
-            />
-          </div>
-          <Button
-            variant="default"
-            className="bg-blue-600 hover:bg-blue-700 w-full"
-            onClick={() => setCreatePoolOpen(true)}
-          >
-            <Plus className="mr-2 w-4 h-4" />
-            Create Pool
-          </Button>
-        </div>
+        {/* Stats Card */}
+        <StatsCard pool={selectedPool} />
 
-        {/* Dashboard Section */}
+        {/* Pool Header dengan Selector */}
         <Card className="border border-cyan-800 bg-gray-900 text-gray-100 shadow-xl">
-          <CardContent className="w-full flex flex-col space-y-4 px-4 py-6">
-            <div className="flex justify-between items-center">
-              <div className="flex flex-col items-center">
-                <span className="text-gray-400 text-sm font-medium">
-                  Your Collateral
-                </span>
-                <span className="text-blue-400 font-bold text-base">
-                  1 WETH
-                </span>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="text-xl">💰</div>
+                <h2 className="text-lg font-bold text-white">Lending Pool</h2>
               </div>
-              <div className="flex flex-col items-center">
-                <span className="text-gray-400 text-sm font-medium">
-                  Your Borrow
-                </span>
-                <span className="text-green-400 font-bold text-base">$0</span>
-              </div>
-              <div className="flex flex-col items-center">
-                <span className="text-gray-400 text-sm font-medium">
-                  Total Value
-                </span>
-                <span className="text-cyan-400 font-bold text-base">
-                  $1,234
-                </span>
-              </div>
+              <PoolSelector
+                pools={pools}
+                selectedPool={selectedPool}
+                loading={loading}
+                onSelectPool={handleSelectPool}
+              />
             </div>
+            {selectedPool && (
+              <>
+                <PositionAddress pool={selectedPool} />
+              </>
+            )}
           </CardContent>
         </Card>
 
-        {loading ? (
-          <div className="text-center py-8 text-gray-400">Loading pools...</div>
-        ) : error ? (
-          <div className="text-center py-8 text-red-400">{error}</div>
-        ) : (
-          pools.map((pool) => (
-            <Card
-              key={pool.id}
-              className="bg-gray-900 text-gray-100 shadow-xl border border-gray-700"
-            >
-              <CardContent className="p-4 space-y-4">
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center space-x-2">
-                    {pool.borrowTokenInfo?.logo && (
-                      <Image
-                        alt={pool.borrowTokenInfo.symbol}
-                        src={pool.borrowTokenInfo.logo}
-                        width={24}
-                        height={24}
-                        className="rounded-full"
-                      />
-                    )}
-                    <span className="text-gray-100 font-medium">
-                      {pool.borrowTokenInfo?.symbol || pool.borrowToken}
-                    </span>
-                  </div>
-                  <span className="text-blue-400 font-medium">
-                    {pool.ltv
-                      ? `${(Number(pool.ltv) / 1e16).toFixed(2)}%`
-                      : "-"}
-                  </span>
+        {/* Token Table */}
+        <Card className="border border-cyan-800 bg-gray-900 text-gray-100 shadow-xl">
+          <CardContent className="p-4">
+            <TokenTable pool={selectedPool} />
+          </CardContent>
+        </Card>
+
+        {/* Pools List */}
+        <Card className="border border-cyan-800 bg-gray-900 text-gray-100 shadow-xl">
+          <CardContent className="p-4">
+            <div className="flex flex-col space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-bold text-blue-400">
+                  Available Pools
+                </h3>
+                <Button
+                  size="sm"
+                  variant="default"
+                  className="bg-blue-600 hover:bg-blue-700"
+                  onClick={() => setCreatePoolOpen(true)}
+                >
+                  <Plus className="mr-2 w-3 h-3" />
+                  Create Pool
+                </Button>
+              </div>
+
+              {loading ? (
+                <div className="text-center py-8 text-gray-400">
+                  Loading pools...
                 </div>
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Collateral:</span>
-                    <div className="flex items-center space-x-2">
-                      {pool.collateralTokenInfo?.logo && (
-                        <Image
-                          alt={pool.collateralTokenInfo.symbol}
-                          src={pool.collateralTokenInfo.logo}
-                          width={20}
-                          height={20}
-                          className="rounded-full"
-                        />
-                      )}
-                      <span className="text-gray-100">
-                        {pool.collateralTokenInfo?.symbol ||
-                          pool.collateralToken}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Liquidity:</span>
-                    <div className="flex items-center space-x-2">
-                      <LiquidityDisplay
-                        lendingPoolAddress={pool.id}
-                        borrowTokenAddress={pool.borrowToken}
-                      />
-                    </div>
-                  </div>
+              ) : error ? (
+                <div className="text-center py-8 text-red-400">{error}</div>
+              ) : (
+                <div className="space-y-3">
+                  {pools.map((pool) => (
+                    <Card
+                      key={pool.id}
+                      className="bg-gray-800 text-gray-100 shadow-lg border border-gray-600"
+                    >
+                      <CardContent className="p-3 space-y-3">
+                        <div className="flex justify-between items-center">
+                          <div className="flex items-center space-x-2">
+                            {pool.borrowTokenInfo?.logo && (
+                              <Image
+                                alt={pool.borrowTokenInfo.symbol}
+                                src={pool.borrowTokenInfo.logo}
+                                width={20}
+                                height={20}
+                                className="rounded-full"
+                              />
+                            )}
+                            <span className="text-gray-100 font-medium text-sm">
+                              {pool.borrowTokenInfo?.symbol || pool.borrowToken}
+                            </span>
+                          </div>
+                          <span className="text-blue-400 font-medium text-sm">
+                            {pool.ltv
+                              ? `${(Number(pool.ltv) / 1e16).toFixed(2)}%`
+                              : "-"}
+                          </span>
+                        </div>
+                        <div className="space-y-1">
+                          <div className="flex justify-between">
+                            <span className="text-gray-400 text-xs">
+                              Collateral:
+                            </span>
+                            <div className="flex items-center space-x-1">
+                              {pool.collateralTokenInfo?.logo && (
+                                <Image
+                                  alt={pool.collateralTokenInfo.symbol}
+                                  src={pool.collateralTokenInfo.logo}
+                                  width={16}
+                                  height={16}
+                                  className="rounded-full"
+                                />
+                              )}
+                              <span className="text-gray-100 text-xs">
+                                {pool.collateralTokenInfo?.symbol ||
+                                  pool.collateralToken}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-400 text-xs">
+                              Liquidity:
+                            </span>
+                            <div className="flex items-center space-x-1">
+                              <LiquidityDisplay
+                                lendingPoolAddress={pool.id}
+                                borrowTokenAddress={pool.borrowToken}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex space-x-2">
+                          <Button
+                            size="sm"
+                            variant="default"
+                            className="bg-blue-600 hover:bg-blue-700 flex-1 text-xs"
+                            onClick={() => handleOpenDetails(pool)}
+                          >
+                            Details
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="border-blue-500 text-blue-400 hover:bg-blue-600 flex-1 text-xs"
+                            onClick={() => handleSelectPool(pool)}
+                          >
+                            Select
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
                 </div>
-                <div className="flex space-x-2">
-                  <Button
-                    size="sm"
-                    variant="default"
-                    className="bg-blue-600 hover:bg-blue-700 flex-1"
-                    onClick={() => handleOpenDetails(pool)}
-                  >
-                    Details
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))
-        )}
+              )}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </>
   );

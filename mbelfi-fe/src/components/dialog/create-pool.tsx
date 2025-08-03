@@ -102,7 +102,7 @@ export const CreatePoolDialog: React.FC<CreatePoolDialogProps> = ({
     }
 
     if (connectedChainId !== defaultChain) {
-      setError(`Please switch to Arbitrum Sepolia (Chain ID: ${defaultChain})`);
+      setError(`Please switch to Etherlink Testnet (Chain ID: ${defaultChain})`);
       return;
     }
 
@@ -307,7 +307,7 @@ export const CreatePoolDialog: React.FC<CreatePoolDialogProps> = ({
                     Switch Network
                   </h3>
                   <p className="text-sm text-yellow-200">
-                    Please switch to Arbitrum Sepolia (Chain ID: {defaultChain})
+                    Please switch to Etherlink Testnet (Chain ID: {defaultChain})
                   </p>
                 </div>
               </div>

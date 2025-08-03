@@ -2,6 +2,7 @@ import React from "react";
 import { useUserWalletBalance } from "@/hooks/read/useUserWalletBalance";
 import { tokens } from "@/constants/tokenAddress";
 import { useChainId } from "wagmi";
+import { Spinner } from "@/components/ui/spinner";
 import { EnrichedPool } from "@/lib/pair-token-address";
 
 interface UserWalletBalanceDisplayProps {
@@ -56,8 +57,9 @@ export const UserWalletBalanceDisplay: React.FC<UserWalletBalanceDisplayProps> =
 
   if (walletBalanceLoading) {
     return (
-      <span className={`font-semibold text-white ${className}`}>
-        Loading... {tokenSymbol}
+      <span className={`font-semibold text-white ${className} flex items-center gap-2`}>
+        <Spinner size="sm" className="text-white" />
+        {tokenSymbol}
       </span>
     );
   }

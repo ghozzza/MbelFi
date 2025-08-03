@@ -17,6 +17,7 @@ export interface TokenInfo {
   symbol: string;
   logo: string;
   address: string;
+  decimals: number;
 }
 
 export function enrichPoolWithTokenInfo(pool: any, chainId = 128123): EnrichedPool {
@@ -34,6 +35,7 @@ export function enrichPoolWithTokenInfo(pool: any, chainId = 128123): EnrichedPo
           symbol: t.symbol,
           logo: t.logo,
           address: tokenAddr,
+          decimals: t.decimals,
         };
       }
     }

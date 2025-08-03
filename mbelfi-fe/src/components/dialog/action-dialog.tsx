@@ -23,10 +23,12 @@ import { UserCurrentBorrowDisplay } from "@/components/user/UserCurrentBorrowDis
 import { UserWalletBalanceDisplay } from "@/components/user/UserWalletBalanceDisplay";
 import { useAccount, useChainId } from "wagmi";
 import { useReadUserCollateral } from "@/hooks/read/useReadUserCollateral";
+import { Spinner } from "@/components/ui/spinner";
 import { useReadUserSupplyShares } from "@/hooks/read/useUserSupplyShares";
 import { useReadTotalSupplyAssets } from "@/hooks/read/useTotalSupplyAssets";
 import { useUserWalletBalance } from "@/hooks/read/useUserWalletBalance";
 import { useReadUserBorrowShares } from "@/hooks/read/useUserBorrowShares";
+import { useReadMaxUserBorrow } from "@/hooks/read/useReadMaxUserBorrow";
 import { tokens } from "@/constants/tokenAddress";
 import { ConnectButton } from "thirdweb/react";
 import { thirdwebClient } from "@/lib/thirdweb-client";
@@ -80,7 +82,12 @@ export function ActionModalView({
           market.collateralTokenInfo?.address?.toLowerCase()
       );
       return token?.decimals || 18;
-    } else if (type === "supply_liquidity" || type === "withdraw_liquidity" || type === "borrow" || type === "repay") {
+    } else if (
+      type === "supply_liquidity" ||
+      type === "withdraw_liquidity" ||
+      type === "borrow" ||
+      type === "repay"
+    ) {
       if (!market?.borrowTokenInfo?.address) return 18;
 
       const token = tokens.find(
@@ -118,7 +125,8 @@ export function ActionModalView({
     walletBalanceLoading: collateralWalletLoading,
     walletBalanceError: collateralWalletError,
   } = useUserWalletBalance(
-    (market.collateralTokenInfo?.address || market.collateralToken) as `0x${string}`,
+    (market.collateralTokenInfo?.address ||
+      market.collateralToken) as `0x${string}`,
     tokenDecimalsForHooks
   );
 
@@ -129,6 +137,16 @@ export function ActionModalView({
     userBorrowSharesLoading,
     userBorrowSharesError,
   } = useReadUserBorrowShares(
+    market.id as `0x${string}`,
+    tokenDecimalsForHooks
+  );
+
+  // Get max user borrow amount for borrow max calculation
+  const {
+    maxUserBorrow,
+    isLoadingMaxUserBorrow,
+    refetchMaxUserBorrow,
+  } = useReadMaxUserBorrow(
     market.id as `0x${string}`,
     tokenDecimalsForHooks
   );
@@ -174,7 +192,10 @@ export function ActionModalView({
   });
 
   // Custom repay approval with 10% buffer
-  const handleRepayApprove = async (tokenAddress: `0x${string}`, spenderAddress: `0x${string}`) => {
+  const handleRepayApprove = async (
+    tokenAddress: `0x${string}`,
+    spenderAddress: `0x${string}`
+  ) => {
     if (!amount || parseFloat(amount) <= 0) {
       toast.error("Please enter a valid amount");
       return;
@@ -231,7 +252,7 @@ export function ActionModalView({
     confirmError: borrowConfirmError,
   } = useBorrow(
     chainId,
-    tokenDecimals,
+    tokenDecimalsForHooks,
     () => {
       setAmount("");
       onAction?.("", undefined);
@@ -298,18 +319,30 @@ export function ActionModalView({
   React.useEffect(() => {
     const timeout = setTimeout(() => {
       // Reset all txHash after 10 seconds of success
-      if (isSupplyCollateralSuccess || isSupplyLiquiditySuccess || 
-          isWithdrawCollateralSuccess || isWithdrawLiquiditySuccess || 
-          isBorrowSuccess || isApproveSuccess || isRepaySuccess) {
+      if (
+        isSupplyCollateralSuccess ||
+        isSupplyLiquiditySuccess ||
+        isWithdrawCollateralSuccess ||
+        isWithdrawLiquiditySuccess ||
+        isBorrowSuccess ||
+        isApproveSuccess ||
+        isRepaySuccess
+      ) {
         // The hooks will handle their own txHash reset
         // This is just a backup to ensure clean state
       }
     }, 10000);
 
     return () => clearTimeout(timeout);
-  }, [isSupplyCollateralSuccess, isSupplyLiquiditySuccess, 
-      isWithdrawCollateralSuccess, isWithdrawLiquiditySuccess, 
-      isBorrowSuccess, isApproveSuccess, isRepaySuccess]);
+  }, [
+    isSupplyCollateralSuccess,
+    isSupplyLiquiditySuccess,
+    isWithdrawCollateralSuccess,
+    isWithdrawLiquiditySuccess,
+    isBorrowSuccess,
+    isApproveSuccess,
+    isRepaySuccess,
+  ]);
 
   // Reset all txHash states
   const resetTxHashStates = () => {
@@ -336,7 +369,17 @@ export function ActionModalView({
       const approvalAmount = parseFloat(amount) * 1.1;
       setRepayApproveAmount(approvalAmount.toString());
     }
-      }, [amount, type, setSupplyCollateralAmount, setSupplyLiquidityAmount, setWithdrawCollateralAmount, setWithdrawLiquidityShares, setBorrowAmount, setApproveAmount, setRepayApproveAmount]);
+  }, [
+    amount,
+    type,
+    setSupplyCollateralAmount,
+    setSupplyLiquidityAmount,
+    setWithdrawCollateralAmount,
+    setWithdrawLiquidityShares,
+    setBorrowAmount,
+    setApproveAmount,
+    setRepayApproveAmount,
+  ]);
 
   // Calculate max amounts for different actions
   const getMaxAmount = () => {
@@ -346,7 +389,11 @@ export function ActionModalView({
       case "supply_liquidity":
         // Use the same balance that's displayed in UserWalletBalanceDisplay
         // If the parsed balance is 0 but we have a formatted balance, try to parse it
-        if (borrowWalletBalance === 0 && borrowWalletBalanceFormatted && borrowWalletBalanceFormatted !== "0") {
+        if (
+          borrowWalletBalance === 0 &&
+          borrowWalletBalanceFormatted &&
+          borrowWalletBalanceFormatted !== "0"
+        ) {
           const parsed = parseFloat(borrowWalletBalanceFormatted);
           return isNaN(parsed) ? 0 : parsed;
         }
@@ -356,7 +403,14 @@ export function ActionModalView({
       case "withdraw_liquidity":
         return userSupplySharesParsed;
       case "borrow":
-        // Use LTV calculation if available, otherwise fallback to 70% of total supply assets
+        // Use max user borrow amount from contract if available, otherwise fallback to 70% of total supply assets
+        if (!isLoadingMaxUserBorrow && maxUserBorrow !== undefined && maxUserBorrow !== null) {
+          // Parse the raw value from contract with proper decimals
+          const rawValue = Number(maxUserBorrow);
+          const parsedValue = rawValue / Math.pow(10, tokenDecimalsForHooks);
+          return parsedValue;
+        }
+        // Fallback to 70% of total supply assets if max user borrow is not available
         if (totalSupplyAssetsParsed > 0) {
           return totalSupplyAssetsParsed * 0.7; // 70% of total supply assets as fallback
         }
@@ -370,12 +424,12 @@ export function ActionModalView({
 
   const handleMaxClick = () => {
     const maxAmount = getMaxAmount();
-    
+
     if (maxAmount > 0) {
       // Format the number to avoid long decimal strings
       const formattedAmount = formatMaxAmount(maxAmount);
       setAmount(formattedAmount);
-      
+
       // Also update the specific action hooks
       if (type === "supply_collateral") {
         setSupplyCollateralAmount(formattedAmount);
@@ -402,26 +456,26 @@ export function ActionModalView({
   // Helper function to format max amount properly
   const formatMaxAmount = (amount: number): string => {
     if (amount === 0) return "0";
-    
+
     // For very small numbers, show more decimal places
     if (amount > 0 && amount < 0.000001) {
-      return amount.toFixed(12).replace(/\.?0+$/, '');
+      return amount.toFixed(12).replace(/\.?0+$/, "");
     }
-    
+
     // For small numbers, show up to 6 decimal places
     if (amount < 1) {
-      return amount.toFixed(6).replace(/\.?0+$/, '');
+      return amount.toFixed(6).replace(/\.?0+$/, "");
     }
-    
+
     // For normal numbers, show 2 decimal places
     if (amount < 1000) {
-      return amount.toFixed(2).replace(/\.?0+$/, '');
+      return amount.toFixed(2).replace(/\.?0+$/, "");
     }
-    
+
     // For large numbers, use locale formatting
-    return amount.toLocaleString('en-US', {
+    return amount.toLocaleString("en-US", {
       minimumFractionDigits: 0,
-      maximumFractionDigits: 2
+      maximumFractionDigits: 2,
     });
   };
 
@@ -430,14 +484,14 @@ export function ActionModalView({
   // Handle amount change
   const handleAmountChange = (value: string) => {
     setAmount(value);
-    
+
     // Handle max button click
     if (value === "max") {
       const maxAmount = getMaxAmount();
       if (maxAmount > 0) {
         const formattedAmount = formatMaxAmount(maxAmount);
         setAmount(formattedAmount);
-        
+
         // Update all relevant action hooks
         if (type === "supply_collateral") {
           setSupplyCollateralAmount(formattedAmount);
@@ -570,19 +624,47 @@ export function ActionModalView({
 
       // Check if user has collateral
       if (userCollateralParsed <= 0) {
-        toast.error("You need to supply collateral first before you can borrow", {
-          description: "Please supply some collateral tokens to this pool.",
-          duration: 5000,
-          style: {
-            background: 'rgba(239, 68, 68, 0.1)',
-            backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(239, 68, 68, 0.3)',
-            color: '#fca5a5',
-            borderRadius: '12px',
-            boxShadow: '0 8px 32px rgba(239, 68, 68, 0.1)'
+        toast.error(
+          "You need to supply collateral first before you can borrow",
+          {
+            description: "Please supply some collateral tokens to this pool.",
+            duration: 5000,
+            style: {
+              background: "rgba(239, 68, 68, 0.1)",
+              backdropFilter: "blur(10px)",
+              border: "1px solid rgba(239, 68, 68, 0.3)",
+              color: "#fca5a5",
+              borderRadius: "12px",
+              boxShadow: "0 8px 32px rgba(239, 68, 68, 0.1)",
+            },
           }
-        });
+        );
         return;
+      }
+
+      // Check if borrow amount exceeds max user borrow amount
+      if (!isLoadingMaxUserBorrow && maxUserBorrow !== undefined && maxUserBorrow !== null) {
+        const borrowAmount = parseFloat(amount);
+        const maxBorrowAmount = Number(maxUserBorrow) / Math.pow(10, tokenDecimalsForHooks);
+        
+        if (borrowAmount > maxBorrowAmount) {
+          toast.error(
+            "Borrow amount exceeds your maximum borrow limit",
+            {
+              description: `Maximum borrow amount: ${formatMaxAmount(maxBorrowAmount)}`,
+              duration: 5000,
+              style: {
+                background: "rgba(239, 68, 68, 0.1)",
+                backdropFilter: "blur(10px)",
+                border: "1px solid rgba(239, 68, 68, 0.3)",
+                color: "#fca5a5",
+                borderRadius: "12px",
+                boxShadow: "0 8px 32px rgba(239, 68, 68, 0.1)",
+              },
+            }
+          );
+          return;
+        }
       }
 
       try {
@@ -615,8 +697,7 @@ export function ActionModalView({
       } catch (error) {
         toast.error("Repay failed");
       }
-    }
-    else {
+    } else {
       onAction?.(amount, undefined);
     }
   };
@@ -655,13 +736,22 @@ export function ActionModalView({
         isWithdrawLiquidityConfirming
       );
     } else if (type === "borrow") {
+      // Check if borrow amount exceeds max borrow
+      const borrowAmount = parseFloat(amount);
+      const exceedsMaxBorrow = !isLoadingMaxUserBorrow && 
+        maxUserBorrow !== undefined && 
+        maxUserBorrow !== null && 
+        borrowAmount > (Number(maxUserBorrow) / Math.pow(10, tokenDecimalsForHooks));
+      
       return (
         !amount ||
         parseFloat(amount) <= 0 ||
         isBorrowing ||
         isBorrowConfirming ||
         !toChain ||
-        userCollateralParsed <= 0 // User must have collateral to borrow
+        userCollateralParsed <= 0 || // User must have collateral to borrow
+        isLoadingMaxUserBorrow || // Disable while loading max borrow data
+        exceedsMaxBorrow // Disable if borrow amount exceeds max borrow
       );
     } else if (type === "repay") {
       return (
@@ -716,9 +806,24 @@ export function ActionModalView({
       if (isBorrowConfirming) {
         return "Confirming...";
       }
+      if (isLoadingMaxUserBorrow) {
+        return "Loading...";
+      }
       if (userCollateralParsed <= 0) {
         return "No Collateral";
       }
+      
+      // Check if borrow amount exceeds max borrow
+      const borrowAmount = parseFloat(amount);
+      const exceedsMaxBorrow = !isLoadingMaxUserBorrow && 
+        maxUserBorrow !== undefined && 
+        maxUserBorrow !== null && 
+        borrowAmount > (Number(maxUserBorrow) / Math.pow(10, tokenDecimalsForHooks));
+      
+      if (exceedsMaxBorrow) {
+        return "Exceeds Limit";
+      }
+      
       return config.buttonText;
     } else if (type === "repay") {
       if (isRepayApproving || isRepayApproveConfirming) {
@@ -780,7 +885,7 @@ export function ActionModalView({
                 Switch Network
               </h3>
               <p className="text-sm text-yellow-200">
-                Please switch to Arbitrum Sepolia (Chain ID: {defaultChain})
+                Please switch to Etherlink Testnet (Chain ID: {defaultChain})
               </p>
             </div>
           </div>
@@ -788,15 +893,17 @@ export function ActionModalView({
       ) : (
         <>
           <div className="flex justify-between items-center text-sm">
-            <span className="text-gray-300 font-medium">{config.balanceLabel}</span>
+            <span className="text-gray-300 font-medium">
+              {config.balanceLabel}
+            </span>
             {/* Use real balance data for different actions */}
-            {(type === "supply_collateral") ? (
+            {type === "supply_collateral" ? (
               <UserWalletBalanceDisplay market={market} actionType={type} />
-            ) : (type === "supply_liquidity") ? (
+            ) : type === "supply_liquidity" ? (
               <UserWalletBalanceDisplay market={market} actionType={type} />
-            ) : (type === "withdraw_collateral") ? (
+            ) : type === "withdraw_collateral" ? (
               <UserCollateralBalanceDisplay market={market} />
-            ) : (type === "withdraw_liquidity") ? (
+            ) : type === "withdraw_liquidity" ? (
               <UserSupplyBalanceDisplay market={market} />
             ) : type === "borrow" ? (
               <UserBorrowBalanceDisplay market={market} />
@@ -815,22 +922,26 @@ export function ActionModalView({
               </span>
             )}
           </div>
-          
+
           {/* Show supplied amount for supply actions */}
-          {(type === "supply_collateral") && (
+          {type === "supply_collateral" && (
             <div className="flex justify-between items-center text-sm">
-              <span className="text-gray-300 font-medium">Your Supplied Collateral</span>
+              <span className="text-gray-300 font-medium">
+                Your Supplied Collateral
+              </span>
               <UserCollateralBalanceDisplay market={market} />
             </div>
           )}
-          
-          {(type === "supply_liquidity") && (
+
+          {type === "supply_liquidity" && (
             <div className="flex justify-between items-center text-sm">
-              <span className="text-gray-300 font-medium">Your Supplied Liquidity</span>
+              <span className="text-gray-300 font-medium">
+                Your Supplied Liquidity
+              </span>
               <UserSupplyBalanceDisplay market={market} />
             </div>
           )}
-          
+
           {/* Show current borrow for borrow action */}
           {type === "borrow" && (
             <div className="flex justify-between items-center text-sm">
@@ -838,15 +949,17 @@ export function ActionModalView({
               <UserCurrentBorrowDisplay market={market} />
             </div>
           )}
-          
+
           {/* Show current debt for repay action */}
           {type === "repay" && (
             <div className="flex justify-between items-center text-sm">
-              <span className="text-gray-300 font-medium">Your Current Debt</span>
+              <span className="text-gray-300 font-medium">
+                Your Borrow Debt
+              </span>
               <UserCurrentBorrowDisplay market={market} />
             </div>
           )}
-          
+
           {/* Show collateral warning for borrow action */}
           {type === "borrow" && userCollateralParsed <= 0 && (
             <div className="bg-gradient-to-r from-yellow-900/30 to-yellow-800/20 border border-yellow-500/40 rounded-xl p-4 shadow-lg">
@@ -861,38 +974,12 @@ export function ActionModalView({
               </div>
             </div>
           )}
-          
-          {/* Show debt status for repay action */}
-          {type === "repay" && (
-            <div className={`rounded-xl p-4 shadow-lg ${
-              userBorrowSharesParsed > 0 
-                ? "bg-gradient-to-r from-red-900/30 to-red-800/20 border border-red-500/40" 
-                : "bg-gradient-to-r from-green-900/30 to-green-800/20 border border-green-500/40"
-            }`}>
-              <div className="flex items-center gap-3">
-                <div className={`w-3 h-3 rounded-full shadow-lg ${
-                  userBorrowSharesParsed > 0 
-                    ? "bg-red-400 shadow-red-400/30" 
-                    : "bg-green-400 shadow-green-400/30"
-                }`}></div>
-                <span className={`text-sm font-semibold ${
-                  userBorrowSharesParsed > 0 ? "text-red-300" : "text-green-300"
-                }`}>
-                  {userBorrowSharesParsed > 0 ? "Active Debt" : "No Debt"}
-                </span>
-              </div>
-              <div className="mt-2 text-xs text-gray-300">
-                {userBorrowSharesParsed > 0 
-                  ? `You have ${userBorrowSharesFormatted} ${market.borrowTokenInfo?.symbol || market.borrowToken} in debt to repay.`
-                  : "You don't have any debt to repay."
-                }
-              </div>
-            </div>
-          )}
-          
+
           {config.showApy && (
             <div className="flex justify-between items-center text-sm">
-              <span className="text-gray-300 font-medium">{config.apyLabel}</span>
+              <span className="text-gray-300 font-medium">
+                {config.apyLabel}
+              </span>
               <span className={`font-semibold ${config.apyColor}`}>
                 {config.apyValue ? config.apyValue(market) : "N/A"}
               </span>
@@ -912,37 +999,45 @@ export function ActionModalView({
             </label>
             <div className="relative">
               <Input
-                placeholder={type === "repay" ? "Enter amount to repay..." : "0.0"}
-                className={`w-full bg-gradient-to-r from-gray-800 to-gray-700 border transition-all duration-200 rounded-xl px-4 py-3 pr-24 ${
-                  type === "repay" 
-                    ? "border-red-600/50 hover:border-red-400/60 focus:border-red-400 focus:ring-2 focus:ring-red-500/30" 
+                placeholder={
+                  type === "repay" ? "Enter amount to repay..." : "0.0"
+                }
+                className={`w-full bg-gradient-to-r from-gray-800 to-gray-700 border transition-all duration-200 mt-2 rounded-lg px-4 py-3 pr-24 ${
+                  type === "repay"
+                    ? "border-blue-600/50 hover:border-blue-400/60 focus:border-blue-400 focus:ring-2 focus:ring-blue-500/30"
                     : "border-gray-600/50 hover:border-blue-400/60 focus:border-blue-400 focus:ring-2 focus:ring-blue-500/30"
                 } text-gray-100`}
                 value={amount}
                 onChange={(e) => handleAmountChange(e.target.value)}
               />
               <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center space-x-3">
-                <span className={`text-sm font-medium ${
-                  type === "repay" ? "text-red-300" : "text-gray-300"
-                }`}>
+                <span
+                  className={`text-sm font-medium ${
+                    type === "repay" ? "text-blue-300" : "text-gray-300"
+                  }`}
+                >
                   {config.tokenSymbol(market)}
                 </span>
                 <button
                   type="button"
                   onClick={handleMaxClick}
                   disabled={
-                    type === "supply_liquidity" ? borrowWalletLoading : 
-                    type === "supply_collateral" ? collateralWalletLoading : 
-                    type === "repay" ? userBorrowSharesLoading : false
+                    type === "supply_liquidity"
+                      ? borrowWalletLoading
+                      : type === "supply_collateral"
+                      ? collateralWalletLoading
+                      : type === "repay"
+                      ? userBorrowSharesLoading
+                      : false
                   }
                   className={`transition-colors flex items-center space-x-1 ${
-                    (type === "supply_liquidity" && borrowWalletLoading) || 
+                    (type === "supply_liquidity" && borrowWalletLoading) ||
                     (type === "supply_collateral" && collateralWalletLoading) ||
                     (type === "repay" && userBorrowSharesLoading)
-                      ? "text-gray-500 cursor-not-allowed" 
+                      ? "text-gray-500 cursor-not-allowed"
                       : type === "repay"
-                        ? "text-red-400 hover:text-red-300"
-                        : "text-blue-400 hover:text-blue-300"
+                      ? "text-blue-400 hover:text-blue-300"
+                      : "text-blue-400 hover:text-blue-300"
                   }`}
                   title="Set to maximum available amount"
                 >
@@ -951,41 +1046,53 @@ export function ActionModalView({
                 </button>
               </div>
             </div>
-            
+
             {/* Repay-specific info */}
             {type === "repay" && amount && parseFloat(amount) > 0 && (
-              <div className="bg-gradient-to-r from-red-900/20 to-red-800/10 border border-red-500/30 rounded-lg p-3">
+              <div className="bg-gradient-to-r from-blue-900/20 to-blue-800/10 border border-blue-500/30 rounded-lg p-3">
                 <div className="flex justify-between items-center text-xs">
-                  <span className="text-red-300">Repay Amount:</span>
-                  <span className="text-white font-medium">{amount} {market.borrowTokenInfo?.symbol || market.borrowToken}</span>
+                  <span className="text-blue-300">Repay Amount:</span>
+                  <span className="text-white font-medium">
+                    {amount}{" "}
+                    {market.borrowTokenInfo?.symbol || market.borrowToken}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center text-xs mt-1">
-                  <span className="text-red-300">Approval Amount (with 10% buffer):</span>
+                  <span className="text-gray-300">
+                    Approval Amount (with 10% buffer):
+                  </span>
                   <span className="text-white font-medium">
-                    {(parseFloat(amount) * 1.1).toFixed(6)} {market.borrowTokenInfo?.symbol || market.borrowToken}
+                    {(parseFloat(amount) * 1.1).toFixed(6)}{" "}
+                    {market.borrowTokenInfo?.symbol || market.borrowToken}
                   </span>
                 </div>
                 {userBorrowSharesParsed > 0 && (
                   <div className="flex justify-between items-center text-xs mt-1">
                     <span className="text-red-300">Remaining Debt:</span>
                     <span className="text-white font-medium">
-                      {Math.max(0, userBorrowSharesParsed - parseFloat(amount)).toFixed(6)} {market.borrowTokenInfo?.symbol || market.borrowToken}
+                      {Math.max(
+                        0,
+                        userBorrowSharesParsed - parseFloat(amount)
+                      ).toFixed(6)}{" "}
+                      {market.borrowTokenInfo?.symbol || market.borrowToken}
                     </span>
                   </div>
                 )}
-                {userBorrowSharesParsed > 0 && parseFloat(amount) > userBorrowSharesParsed && (
-                  <div className="mt-2 p-2 bg-yellow-900/20 border border-yellow-500/30 rounded text-xs text-yellow-300">
-                    ⚠️ You're repaying more than your debt. Excess will be refunded.
-                  </div>
-                )}
+                {userBorrowSharesParsed > 0 &&
+                  parseFloat(amount) > userBorrowSharesParsed && (
+                    <div className="mt-2 p-2 bg-yellow-900/20 border border-yellow-500/30 rounded text-xs text-yellow-300">
+                      ⚠️ You're repaying more than your debt. Excess will be
+                      refunded.
+                    </div>
+                  )}
               </div>
             )}
-            
+
             {/* Repay loading state */}
             {type === "repay" && userBorrowSharesLoading && (
               <div className="bg-gradient-to-r from-gray-900/20 to-gray-800/10 border border-gray-500/30 rounded-lg p-3">
                 <div className="flex items-center gap-2 text-xs text-gray-300">
-                  <div className="w-3 h-3 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+                  <Spinner size="sm" className="text-gray-400" />
                   Loading debt information...
                 </div>
               </div>
@@ -996,12 +1103,14 @@ export function ActionModalView({
             disabled={isButtonDisabled()}
             variant={getButtonColor()}
             className={`${config.buttonClass} ${
-              type === "repay" 
-                ? "bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 focus:ring-red-500/30" 
+              type === "repay"
+                ? "bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 focus:ring-blue-500/30"
                 : ""
             }`}
           >
-            {React.createElement(config.buttonIcon, { className: "mr-2 w-5 h-5" })}
+            {React.createElement(config.buttonIcon, {
+              className: "mr-2 w-5 h-5",
+            })}
             {getButtonText()}
           </Button>
 
@@ -1023,7 +1132,9 @@ export function ActionModalView({
                     isConfirming={isApproveConfirming}
                     isSuccess={isApproveSuccess}
                     isError={isApproveError}
-                    errorMessage={approveWriteError?.message || approveConfirmError?.message}
+                    errorMessage={
+                      approveWriteError?.message || approveConfirmError?.message
+                    }
                   />
                 )}
 
@@ -1035,9 +1146,12 @@ export function ActionModalView({
                     txHash={supplyCollateralTxHash || supplyLiquidityTxHash}
                     chainId={chainId}
                     isConfirming={
-                      isSupplyCollateralConfirming || isSupplyLiquidityConfirming
+                      isSupplyCollateralConfirming ||
+                      isSupplyLiquidityConfirming
                     }
-                    isSuccess={isSupplyCollateralSuccess || isSupplyLiquiditySuccess}
+                    isSuccess={
+                      isSupplyCollateralSuccess || isSupplyLiquiditySuccess
+                    }
                     isError={isSupplyCollateralError || isSupplyLiquidityError}
                     errorMessage={
                       supplyCollateralWriteError?.message ||
@@ -1057,7 +1171,10 @@ export function ActionModalView({
                   isConfirming={isWithdrawCollateralConfirming}
                   isSuccess={isWithdrawCollateralSuccess}
                   isError={isWithdrawCollateralError}
-                  errorMessage={withdrawCollateralWriteError?.message || withdrawCollateralConfirmError?.message}
+                  errorMessage={
+                    withdrawCollateralWriteError?.message ||
+                    withdrawCollateralConfirmError?.message
+                  }
                 />
               )}
 
@@ -1070,7 +1187,10 @@ export function ActionModalView({
                   isConfirming={isWithdrawLiquidityConfirming}
                   isSuccess={isWithdrawLiquiditySuccess}
                   isError={isWithdrawLiquidityError}
-                  errorMessage={withdrawLiquidityWriteError?.message || withdrawLiquidityConfirmError?.message}
+                  errorMessage={
+                    withdrawLiquidityWriteError?.message ||
+                    withdrawLiquidityConfirmError?.message
+                  }
                 />
               )}
 
@@ -1083,16 +1203,15 @@ export function ActionModalView({
                   isConfirming={isBorrowConfirming}
                   isSuccess={isBorrowSuccess}
                   isError={isBorrowError}
-                  errorMessage={borrowWriteError?.message || borrowConfirmError?.message}
+                  errorMessage={
+                    borrowWriteError?.message || borrowConfirmError?.message
+                  }
                 />
               )}
-
-              
-              
             </div>
           )}
         </>
       )}
     </div>
   );
-} 
+}

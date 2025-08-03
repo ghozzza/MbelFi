@@ -2,6 +2,7 @@ import React from "react";
 import { useReadUserCollateral } from "@/hooks/read/useReadUserCollateral";
 import { tokens } from "@/constants/tokenAddress";
 import { useChainId } from "wagmi";
+import { Spinner } from "@/components/ui/spinner";
 
 interface UserCollateralBalanceProps {
   lendingPoolAddress: string;
@@ -49,7 +50,8 @@ export const UserCollateralBalance: React.FC<UserCollateralBalanceProps> = ({
 
   if (collateralLoading) {
     return (
-      <div className={`text-gray-400 text-sm ${className}`}>
+      <div className={`text-gray-400 text-sm ${className} flex items-center gap-2`}>
+        <Spinner size="sm" className="text-gray-400" />
         Loading collateral...
       </div>
     );

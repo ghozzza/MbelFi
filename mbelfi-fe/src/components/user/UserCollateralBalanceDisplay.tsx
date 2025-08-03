@@ -3,6 +3,7 @@ import { useReadUserCollateral } from "@/hooks/read/useReadUserCollateral";
 import { tokens } from "@/constants/tokenAddress";
 import { useChainId } from "wagmi";
 import { EnrichedPool } from "@/lib/pair-token-address";
+import { Spinner } from "@/components/ui/spinner";
 
 interface UserCollateralBalanceDisplayProps {
   market: EnrichedPool;
@@ -37,8 +38,9 @@ export const UserCollateralBalanceDisplay: React.FC<UserCollateralBalanceDisplay
 
   if (collateralLoading) {
     return (
-      <span className={`font-semibold text-white ${className}`}>
-        Loading... {market.collateralTokenInfo?.symbol || market.collateralToken}
+      <span className={`font-semibold text-white ${className} flex items-center gap-2`}>
+        <Spinner size="sm" className="text-white" />
+        {market.collateralTokenInfo?.symbol || market.collateralToken}
       </span>
     );
   }
