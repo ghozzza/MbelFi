@@ -12,7 +12,6 @@ import {
   HistoryPagination,
   HistoryEmptyState,
   HistoryLoadingState,
-  HistoryLoadMore,
   WalletConnectionRequired,
 } from "./components";
 
@@ -69,7 +68,7 @@ const HistoryPage: React.FC = () => {
   }, [transactions, searchTerm, filterStatus, filterType, sortBy]);
 
   // Pagination
-  const itemsPerPage = 10;
+  const itemsPerPage = 6;
   const totalPages = Math.ceil(
     filteredAndSortedTransactions.length / itemsPerPage
   );
@@ -176,13 +175,6 @@ const HistoryPage: React.FC = () => {
                 totalPages={totalPages}
                 onPrevPage={handlePrevPage}
                 onNextPage={handleNextPage}
-              />
-
-              {/* Load More for API */}
-              <HistoryLoadMore
-                hasMore={hasMore}
-                loading={loading}
-                onLoadMore={handleLoadMore}
               />
             </>
           )}

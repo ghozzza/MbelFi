@@ -8,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, RefreshCw, Loader2, BarChart3, TrendingUp, Wallet, Clock } from "lucide-react";
+import { Funnel, RefreshCw, Loader2, BarChart3, TrendingUp, Wallet, Clock } from "lucide-react";
 
 interface HistoryFiltersProps {
   filterType: string;
@@ -30,7 +30,7 @@ const HistoryFilters: React.FC<HistoryFiltersProps> = ({
           {/* Filter Section */}
           <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
             <div className="flex items-center gap-2 text-gray-300 text-sm font-medium">
-              <Search className="w-4 h-4" />
+              <Funnel className="w-4 h-4" />
               <span>Filter by:</span>
             </div>
             

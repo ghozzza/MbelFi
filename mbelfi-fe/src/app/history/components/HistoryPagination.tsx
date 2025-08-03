@@ -20,7 +20,7 @@ const HistoryPagination: React.FC<HistoryPaginationProps> = ({
   }
 
   return (
-    <div className="flex items-center justify-center space-x-4 pt-6">
+    <div className="flex items-center justify-center space-x-4 pt-6 mb-20">
       <Button
         onClick={onPrevPage}
         disabled={currentPage === 1}
