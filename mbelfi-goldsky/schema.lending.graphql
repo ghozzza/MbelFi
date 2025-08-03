@@ -1,0 +1,111 @@
+type LendingPool @entity {
+  id: ID!
+  address: Bytes!
+  factory: LendingPoolFactory!
+  token0: Bytes!
+  token1: Bytes!
+  totalDeposits: BigInt!
+  totalWithdrawals: BigInt!
+  totalBorrows: BigInt!
+  totalRepays: BigInt!
+  created: BigInt!
+}
+
+type User @entity {
+  id: ID!
+  address: Bytes!
+  totalDeposited: BigInt!
+  totalWithdrawn: BigInt!
+  totalBorrowed: BigInt!
+  totalRepaid: BigInt!
+}
+
+type LendingPoolFactory @entity {
+  id: ID!
+  address: Bytes!
+  poolsCreated: [LendingPool!]! @derivedFrom(field: "factory")
+  totalPoolsCreated: BigInt!
+  created: BigInt!
+}
+
+type LendingPoolCreated @entity {
+  id: ID!
+  lendingPool: Bytes!
+  collateralToken: Bytes!
+  borrowToken: Bytes!
+  ltv: BigInt!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+type SupplyLiquidity @entity {
+  id: ID!
+  user: User!
+  pool: LendingPool!
+  asset: Bytes!
+  amount: BigInt!
+  onBehalfOf: Bytes!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+type WithdrawLiquidity @entity {
+  id: ID!
+  user: User!
+  pool: LendingPool!
+  asset: Bytes!
+  amount: BigInt!
+  to: Bytes!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+type BorrowDebtCrosschain @entity {
+  id: ID!
+  user: User!
+  pool: LendingPool!
+  asset: Bytes!
+  amount: BigInt!
+  borrowRateMode: BigInt!
+  borrowRate: BigInt!
+  onBehalfOf: Bytes!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+type RepayWithCollateralByPosition @entity {
+  id: ID!
+  user: User!
+  pool: LendingPool!
+  asset: Bytes!
+  amount: BigInt!
+  repayer: Bytes!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+type SupplyCollateral @entity {
+  id: ID!
+  user: User!
+  pool: LendingPool!
+  asset: Bytes!
+  amount: BigInt!
+  onBehalfOf: Bytes!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+type CreatePosition @entity {
+  id: ID!
+  user: User!
+  pool: LendingPool!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
