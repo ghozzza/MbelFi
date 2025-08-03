@@ -8,6 +8,8 @@ import { useReadPositionBalance } from "@/hooks/read/useReadPositionBalance";
 import { defaultChain } from "@/lib/get-default-chain";
 import { tokens } from "@/constants/tokenAddress";
 import { EnrichedPool } from "@/lib/pair-token-address";
+import Link from "next/link";
+import { RepayDialog } from "@/components/dialog/repay-dialog";
 
 interface TokenTableProps {
   pool: EnrichedPool | null;
@@ -15,6 +17,8 @@ interface TokenTableProps {
 
 export const TokenTable: React.FC<TokenTableProps> = ({ pool }) => {
   const { address } = useAccount();
+  const [isRepayDialogOpen, setIsRepayDialogOpen] = React.useState(false);
+  const [selectedToken, setSelectedToken] = React.useState<any>(null);
   const { addressPosition, isLoadingAddressPosition } =
     useReadAddressPosition(
       pool?.id || "0x0000000000000000000000000000000000000000"
@@ -124,30 +128,36 @@ export const TokenTable: React.FC<TokenTableProps> = ({ pool }) => {
 
                 {/* Quick Actions Column */}
                 <div className="flex items-center justify-center gap-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="bg-blue-600 hover:bg-blue-700 text-white border-blue-500"
-                  >
-                    <svg
-                      className="w-4 h-4 mr-1"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
+                  <Link href="/swap">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="bg-blue-600 hover:bg-blue-700 text-white border-blue-500"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
-                      />
-                    </svg>
-                    Trade
-                  </Button>
+                      <svg
+                        className="w-4 h-4 mr-1"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+                        />
+                      </svg>
+                      Trade
+                    </Button>
+                  </Link>
                   <Button
                     size="sm"
                     variant="outline"
                     className="bg-green-600 hover:bg-green-700 text-white border-green-500"
+                    onClick={() => {
+                      setSelectedToken(token);
+                      setIsRepayDialogOpen(true);
+                    }}
                   >
                     <svg
                       className="w-4 h-4 mr-1"
@@ -170,6 +180,19 @@ export const TokenTable: React.FC<TokenTableProps> = ({ pool }) => {
           }
         )}
       </div>
+      
+      {/* Repay Dialog */}
+      {pool && pool.borrowToken && selectedToken && (
+        <RepayDialog
+          market={pool}
+          selectedToken={selectedToken}
+          isOpen={isRepayDialogOpen}
+          onClose={() => {
+            setIsRepayDialogOpen(false);
+            setSelectedToken(null);
+          }}
+        />
+      )}
     </div>
   );
 }; 

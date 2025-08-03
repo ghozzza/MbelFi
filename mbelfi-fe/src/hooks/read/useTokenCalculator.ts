@@ -38,7 +38,7 @@ export const useTokenCalculator = (
     allTokens: tokens.map(t => ({ symbol: t.symbol, address: t.addresses[defaultChain] }))
   });
 
-  const amountInBigInt = BigInt(amountIn * 10 ** (decimalsIn ?? 0));
+  const amountInBigInt = BigInt(Math.round(amountIn * 10 ** (decimalsIn ?? 0)));
   const tokenInPrice = tokens.find(
     (token) => token.addresses[defaultChain] === tokenIn
   )?.priceFeed[defaultChain] as Address;
