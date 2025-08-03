@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { ConnectButton } from "thirdweb/react";
@@ -66,9 +67,18 @@ export const NavbarNeon = () => {
       <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-2xl blur opacity-20 animate-pulse"></div>
       <div className="relative bg-gray-950/90 rounded-2xl px-6 py-4">
         <div className="flex items-center justify-between">
+          <Link href="/" className="flex items-center">
+            <Image
+              src="/mbelbluelogo.png"
+              alt="MbelFi Logo"
+              width={50}
+              height={50}
+              className="drop-shadow-lg hover:scale-105 transition-transform duration-200"
+            />
           <div className="text-2xl font-bold text-cyan-400 drop-shadow-lg">
             <span className="text-shadow-neon">MbelFi</span>
           </div>
+          </Link>
           <div
             ref={navRef}
             className="hidden md:flex items-center space-x-2 relative"

@@ -2,6 +2,7 @@ import React from "react";
 import BlurText from "@/components/ui/blur-text";
 import { useRouter } from "next/navigation";
 import { ArrowUpRight } from "lucide-react";
+import { motion } from "framer-motion";
 
 function AnimateBlurText() {
   const router = useRouter();
@@ -12,13 +13,27 @@ function AnimateBlurText() {
 
   return (
     <div className="text-center flex flex-col items-center justify-center mt-4 md:mt-8 px-4">
-      <BlurText
-        text="Embacon"
-        delay={150}
-        animateBy="words"
-        direction="top"
-        className="text-lg sm:text-2xl md:text-3xl lg:text-5xl mb-1 md:mb-2 font-bold"
-      />
+      <motion.h1 
+        className="gradient-text text-lg sm:text-2xl md:text-3xl lg:text-6xl mb-1 md:mb-2 font-bold bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent hover:scale-105 transition-all duration-500 ease-in-out"
+        initial={{ opacity: 0, y: -50, filter: "blur(10px)", scale: 0.8 }}
+        animate={{ opacity: 1, y: 0, filter: "blur(0px)", scale: 1 }}
+        transition={{ 
+          duration: 1.2, 
+          delay: 0.2,
+          ease: [0.25, 0.46, 0.45, 0.94],
+          type: "spring",
+          stiffness: 100,
+          damping: 15
+        }}
+        whileHover={{ 
+          scale: 1.05,
+          rotate: [0, -1, 1, 0],
+          transition: { duration: 0.3 }
+        }}
+        whileTap={{ scale: 0.95 }}
+      >
+        MbelFi
+      </motion.h1>
       <BlurText
         text="Built on Etherlink"
         delay={150}

@@ -19,6 +19,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "MbelFi",
   description: "Permsissionless Lending Protocol",
+  icons: {
+    icon: "/mbelbluelogo.png",
+    shortcut: "/mbelbluelogo.png",
+    apple: "/mbelbluelogo.png",
+  },
 };
 
 export default function RootLayout({
