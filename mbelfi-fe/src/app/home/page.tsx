@@ -1,22 +1,18 @@
 "use client";
+import Hero from "./components/hero";
+import Sponsored from "./components/sponsored";
 
 import React from "react";
-import DesktopView from "./_components/DesktopView";
-import MobileView from "./_components/MobileView";
 
-export default function HomePage() {
-  const [isMobile, setIsMobile] = React.useState(false);
-
-  React.useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile(); 
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
-
+const Page = () => {
   return (
-    <div className=" flex items-center justify-center">
-      {isMobile ? <MobileView /> : <DesktopView />}
+    <div className="relative">
+      <Hero />
+      <div className="relative">
+        <Sponsored />
+      </div>
     </div>
   );
-}
+};
+
+export default Page;
