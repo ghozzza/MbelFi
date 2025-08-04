@@ -255,7 +255,7 @@ Each swap transaction incurs a small liquidity fee, which is distributed among a
 
 ## License
 
-MIT License © 2025 Embacon Finance
+MIT License © 2025 Mbel Finance
 
 ---
 
