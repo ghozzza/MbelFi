@@ -3,22 +3,22 @@
 ## Project Demo
 [Go to site](https://mbelfi.vercel.app/)
 
-![Project Screenshot](https://github.com/ahmadstiff/embacon-finance/blob/master/embacon-fe/public/home.png)
+![Project Screenshot](https://res.cloudinary.com/dpown64xj/image/upload/v1754304034/Screenshot_2025-08-04_at_17.40.23_vnaahn.png)
 
 ---
 # Overview
 
-## What Is Embacon Finance?
+## What Is Mbel Finance?
 
 Mbel Finance is a permissionless cross-chain lending and borrowing protocol built on Etherlink. It is designed to provide fast, affordable, and seamless decentralized finance experiences across multiple blockchain environments.
 
 Key components include:
 
-Etherlink, a fast and cost-efficient Layer 2 solution.
+- Etherlink, a fast and cost-efficient Layer 2 solution.
 
-Hyperlane, used for trustless cross-chain messaging and asset movement.
+- Hyperlane, used for trustless cross-chain messaging and asset movement.
 
-RedStone, which supplies reliable, real-time data to the protocol.
+- RedStone, which supplies reliable, real-time data to the protocol.
 
 ## Key Features
 
@@ -36,235 +36,220 @@ Mbel Finance enables seamless cross-chain interactions using Hyperlane for secur
 
 # Why Built on Etherlink?
 
-## Join Us
+Mbel Finance is built on Etherlink, an EVM-compatible, non-custodial Layer 2 blockchain powered by Tezos Smart Rollup technology. Etherlink was chosen for its exceptional performance, developer experience, and strong security guarantees.
 
-Embacon Finance is a next-generation cross-chain lending protocol built with a focus on seamless user experience, accessibility, and secure interoperability. At the core of this experience is the MetaMask SDK, which empowers developers and users alike to interact with Embacon’s multi-chain features through persistent, secure wallet sessions and intuitive connection flows across platforms. By eliminating unnecessary friction in onboarding, transaction signing, and network switching, Embacon makes cross-chain DeFi interactions feel as seamless as single-chain ones.
+## What is Etherlink?
 
-We believe the future of DeFi lies in simplicity, accessibility, and open collaboration. With MetaMask SDK enabling effortless access and reliable wallet connectivity, Embacon provides a solid foundation for developers to build secure, user-friendly cross-chain financial applications.
+Etherlink enables seamless integration with Ethereum tools such as wallets and indexers, and allows fast asset transfers to and from other EVM-compatible chains.
 
-We invite builders, contributors, and curious minds to collaborate with us. Whether you're integrating Embacon into your dApp, extending functionality, or helping shape the future of interoperable DeFi. Let’s create a world where capital flows freely across chains and users stay in full control, no matter where they are.
+Built on Tezos Layer 1, Etherlink offers a fast, fair, and (nearly) free environment for DeFi protocols and applications.
+
+## Fast Confirmation
+
+Etherlink provides low-latency confirmations under 500 milliseconds, allowing for real-time user experiences. By leveraging Tezos's 2-block finality and the speed of Smart Rollups, Etherlink ensures both fast and secure transaction execution.
+
+## Fair and Open Governance
+
+Etherlink governance integrates with Tezos’s permissionless fraud-proof mechanisms. Stakeholders can propose upgrades, vote on protocol changes, and challenge state commitments.
+Participation is open to anyone, ensuring transparency and fairness without administrative keys or centralized controls. Users retain full control of their assets, reducing the risk of censorship or manipulation.
+
+## Low Transaction Costs
+
+Etherlink drastically reduces transaction costs by using enshrined Smart Rollups, which run in separate execution environments. These rollups avoid standard Layer 1 gas fees and only incur minimal charges when interacting with the base layer. This architecture supports scalable application development without cost barriers.
 
 ---
 # Problems and Solutions
 
-In building a permissionless cross-chain lending protocol, we identified the most pressing challenges in multichain DeFi and designed focused solutions through integrations that prioritize security, real-time data, and user accessibility, including with the MetaMask SDK.
+## High Gas Fees and Network Congestion
 
-## Fragmented Liquidity Across Chains
+**Problem**: Many DeFi users face expensive gas fees and delayed transaction confirmations on congested Layer 1 networks like Ethereum, making lending and borrowing inefficient and costly.
 
-**Problem**: DeFi users are often constrained by isolated liquidity pools on individual blockchains, limiting access to optimal borrowing or lending opportunities.
+**Mbel Finance's Solution**: Mbel Finance is built on Etherlink, an EVM-compatible Layer 2 that offers ultra-fast confirmations and nearly zero gas costs. This provides users with a smooth and affordable DeFi experience.
 
-**Embacon Finance's Solution**: Embacon Finance solves this through secure cross-chain functionality powered by atomic messaging protocols, enabling users to deposit collateral on one chain and borrow on another without relying on centralized bridges or wrapped assets. This unlocks multichain capital access and improves capital efficiency across ecosystems. With the integration of the MetaMask SDK, users can interact with cross-chain features through a seamless and persistent wallet connection, removing the friction of managing multiple chains manually.
+## Slow and Complex Cross-Chain Communication
 
-## Delayed Price Feeds
+**Problem**: Cross-chain DeFi protocols often suffer from slow message delivery, unreliable relayers, or centralized bridging systems. Leading to poor user experience and potential security risks.
 
-**Problem**: Traditional oracles often suffer from latency or low update frequency, resulting in outdated collateral pricing, miscalculated LTV ratios, and increased exposure to market volatility.
+**Mbel Finance's Solution**: Mbel Finance integrates Hyperlane, a permissionless interoperability protocol that enables fast and secure cross-chain messaging without relying on centralized infrastructure.
 
-**Embacon Finance's Solution**: By integrating real-time price data feeds, Embacon ensures up-to-date collateral valuations and dynamic loan tracking, empowering users with accurate, real-time position insights. Combined with MetaMask SDK's session persistence, users receive these updates without needing to constantly reauthorize wallet access, maintaining a consistent and uninterrupted view of their loan health and exposure.
+## Inaccurate or Delayed On-Chain Price Feeds
 
-## Closed and Restrictive Protocols Hinder Broader Participation
+**Problem**: Access to real-time, reliable price data is critical in lending protocols. Many oracle solutions are either delayed, centralized, or expensive to maintain.
 
-**Problem**: A significant number of lending platforms operate within closed ecosystems, relying on mechanisms such as whitelisting, centralized governance, or limited collateral support. These restrictions reduce accessibility, limit user autonomy, and compromise the principles of transparency and decentralization.
-
-**Embacon Finance's Solution**: Embacon Finance is designed as a fully permissionless protocol, enabling any user to engage in lending or borrowing activities without the need for prior approval or reliance on centralized intermediaries. This open-access architecture fosters inclusivity, enhances transparency, and aligns with the core ethos of decentralized finance by supporting unrestricted global participation. MetaMask SDK integration reinforces this open design by allowing any user to connect instantly from supported platforms, without requiring complex configurations or centralized access control.
-
-## Collateral Management is Inflexible
-
-**Problem**: Other lending protocols require users to exit positions to adjust their collateral, incurring costs and friction during portfolio adjustments.
-
-**Embacon Finance's Solution**: Embacon introduces a native in-protocol collateral swap mechanism, allowing users to seamlessly change their collateral type without closing positions. This feature is backed by real-time pricing infrastructure to ensure accurate valuations during the swap process. The experience is further streamlined through MetaMask SDK, which enables users to execute swaps, approvals, and confirmations through a unified interface, reducing friction and maintaining a smooth, responsive interaction flow.
+**Mbel Finance's Solution**: Mbel Finance uses Redstone, which offer fast, efficient, and decentralized data feeds tailored for DeFi applications, ensuring accurate pricing and protocol stability.
 
 ---
 
-# Challenges
+# Mbel Finance Tech Stack
 
-## Challenges Faced by Embacon Finance
+## Hyperlane
 
-### Secure Cross-Chain Messaging Without Centralization
+### Cross-Chain Messaging Infrastructure
 
-**Challenge**: Implementing cross-chain functionality in DeFi often relies on custodial bridges or wrapped assets, which introduce significant security risks and systemic vulnerabilities. Embacon’s challenge was to deliver secure and verifiable cross-chain communication without compromising decentralization. While building on top of atomic messaging frameworks, Embacon had to ensure not only the integrity of token transfers but also the safe orchestration of protocol logic across multiple blockchain environments. This required careful handling of message validation, failure recovery, and trust minimization throughout the system. Additionally, ensuring that users could interact with these complex cross-chain operations securely and intuitively led to the integration of the MetaMask SDK, which played a key role in abstracting away the technical overhead of multi-network interaction, allowing users to focus on their intent rather than the underlying infrastructure.
+Hyperlane is the foundation that enables Mbel Finance to operate across multiple blockchain networks. It allows smart contracts to communicate with each other between chains, so when a user initiates a lending or borrowing action on one chain, it can be executed and reflected on another. This interoperability happens in a permissionless and decentralized way, without relying on centralized bridges.
 
-### Real-Time Price Delivery and On-Chain Integration
+By using Hyperlane’s modular security model, Mbel Finance can tailor its security settings to match its needs, ensuring messages and actions between chains are validated and secure. This allows for fast and flexible development of cross-chain DeFi features without compromising safety.
 
-**Challenge**: Other lending protocols may function with delayed price updates, but in a cross-chain setting, real-time valuation is essential. Embacon’s integration of real-time data infrastructure introduces challenges related to on-chain data consumption, synchronization across networks, and ensuring consistency during periods of volatility. These data feeds must be integrated in a way that balances responsiveness with gas efficiency. Moreover, to ensure that users can act on real-time information without interruption, Embacon relies on the MetaMask SDK to maintain persistent wallet sessions. Enabling seamless access to up-to-date borrowing limits and collateral health metrics, without forcing users to repeatedly reconnect or approve interactions across different networks.
+## Goldsky
 
-### Maintaining Protocol Resilience Against Oracle Manipulation
+### Real-Time Data Indexing
 
-**Challenge**: Relying on a single source of truth can expose lending protocols to manipulation or failure. Even when leveraging decentralized data aggregation, integrating real-time feeds into core protocol operations requires safeguards such as deviation thresholds, update throttling, and fallback logic. Embacon must ensure that external data, especially when used for critical functions like collateral evaluation or eligibility enforcement, does not become a vector for systemic failure. This challenge also extends to how users interact with sensitive data-driven processes. Through the MetaMask SDK, Embacon enhances user-facing reliability by reducing signature prompts and streamlining the UX around price-triggered events. Making data-heavy operations feel smoother and more transparent to end users.
+In Mbel Finance, Goldsky is used exclusively to power real-time indexing and querying of on-chain events. As a cross-chain lending and borrowing protocol, Mbel Finance requires accurate and up-to-date data to provide users with responsive interfaces, live lending/borrowing positions, and transaction histories.
 
-### Operational Coordination Across Multiple Chain Environments
+Goldsky allows the frontend to instantly reflect changes on-chain by indexing events such as deposits, borrows, repayments, and cross-chain messages. This eliminates the need for complex backend infrastructure or manual data polling, enabling a seamless experience across different chains.
 
-**Challenge**: Running a lending protocol across chains introduces significant operational complexity. Embacon must account for chain-specific behaviors, execution timing, token standards, and fluctuating gas costs. Managing processes like token burning, message confirmation, and minting across heterogeneous environments requires precise coordination and extensive testing. Furthermore, maintaining a consistent user experience across chains is nontrivial. By leveraging the MetaMask SDK, Embacon ensures that users don’t have to manually switch networks or troubleshoot connection issues across environments. This abstraction enables the protocol to focus on cross-chain logic while the SDK handles network detection, session management, and secure access. All contributing to a more unified and frictionless user journey.
+By integrating Goldsky, Mbel ensures that users always interact with live data improving transparency, performance, and responsiveness of the protocol interface.
+
+## Thirdweb
+
+### Frontend Integration Toolkit
+
+In Mbel Finance, Thirdweb is primarily used as a frontend toolkit to simplify wallet connections, contract interactions, and user interface development. It helps integrate smart contract functionality into the frontend without requiring low-level coding or custom wallet logic.
+
+By leveraging Thirdweb's SDK, Mbel Finance is able to provide users with a smooth and responsive experience when connecting wallets, signing transactions, and interacting with protocol features. It also supports multi-chain workflows, making it easier for users to access Mbel Finance's cross-chain functionalities directly from their browser.
+
+## RedStone
+
+### Decentralized Price Oracle
+
+RedStone supplies real-time price feeds to the Mbel Finance protocol. In any lending and borrowing platform, accurate asset pricing is essential to determine collateral value, borrowing capacity, and liquidation thresholds. An unreliable oracle could create risks for the protocol and its users.
+
+RedStone delivers price data in a decentralized and tamper-resistant way. Their unique approach allows Mbel Finance to securely access pricing info at the moment it’s needed keeping the platform efficient while maintaining strong protection against manipulation.
+
+---
 
 # How We Achieve Cross-Chain Capability
-![Flowchart Screenshot](https://github.com/ahmadstiff/embacon-finance/blob/master/embacon-fe/public/embaconhowcross.gif)
-Embacon Finance achieves secure and verifiable cross-chain lending by leveraging Chainlink’s Cross-Chain Interoperability Protocol (CCIP) to facilitate communication and token transfer between blockchain networks. The protocol enables users to deposit collateral on one chain and borrow stablecoins on another without relying on centralized bridges or wrapped assets by utilizing a secure burn-and-mint mechanism.
+![Flowchart Screenshot](https://res.cloudinary.com/dpown64xj/image/upload/v1754303789/mbelarchitecture1_cdtjuo.jpg)
+Mbel Finance introduces a modular cross-chain architecture built around a Origin Chain, a Messaging Layer, and Destination Chains.
 
-In our current architecture, as illustrated:
+The Origin Chain, Etherlink, serves as the core of the protocol. It stores all liquidity, manages lending and borrowing logic, and acts as the source of truth for user positions and protocol state. As a fast and low-cost optimistic rollup, Etherlink enables near-instant transactions and significantly reduces gas costs, providing an optimal base layer for Mbel Finance’s operations.
 
-- On the **Source Chain (Arbitrum Sepolia)**, users deposit collateral (e.g., MockWETH) into the Embacon Liquidity Pool. The deposited tokens are handled by `BasicTokenSender.sol`, which interacts with the Chainlink CCIP Router. This Router prepares a cross-chain message, processes transaction fees (in LINK or Native Gas Token), and initiates a burn operation of the deposited tokens, removing them from circulation and preventing supply duplication.
+Cross-chain communication is powered by Hyperlane, a permissionless messaging protocol. Hyperlane ensures reliable and secure message delivery across chains without relying on centralized bridges. It handles the dispatch, transport, and verification of messages from Etherlink to other supported chains.
 
-- The burn-and-mint method, native to Chainlink CCIP’s token pool mechanism, ensures that tokens exist on only one chain at any time. The burn event is cryptographically verified and transmitted by Chainlink’s decentralized oracle network (DON), forming a secure proof of collateral transfer.
+Destination Chains, such as Arbitrum Sepolia and Base Sepolia, do not hold protocol state or execute business logic. Instead, they act as endpoints where user balances are updated based on instructions from the Origin Chain. This separation enables scalability and modularity without duplicating core logic across chains.
 
-- Once received on the **Destination Chain (Base Sepolia)**, the corresponding CCIP Router invokes the `LendingPool.sol` contract. This contract verifies the message and proof, and accordingly credits the user with the right to borrow stablecoins (e.g., MockUSDC), which are minted or released from liquidity on the destination chain.
+When users perform actions such as borrowing or redeeming assets, the transaction is processed on Etherlink. Hyperlane then transmits the result to the appropriate Destination Chain, which reflects the outcome in the user's wallet or interface. This cross-chain interaction ensures consistency while maintaining performance and decentralization.
 
-- Both MockWETH and MockUSDC are continuously priced using Chainlink Data Streams, a low-latency oracle feed that ensures accurate and high-frequency pricing. These feeds are crucial for determining borrowing capacity, monitoring risk exposure, and enabling dynamic collateral swap logic within the protocol.
+Mbel Finance's architecture enables permissionless lending and borrowing with fast cross-chain settlement, made possible by Etherlink’s performance and Hyperlane’s messaging capabilities.
 
-By combining CCIP and Data Streams, Embacon Finance unlocks native cross-chain borrowing with high levels of security, precision, and capital efficiency without relying on wrapped tokens or centralized liquidity hubs. This positions Embacon as a modular, interoperable DeFi primitive ready to scale across blockchain ecosystems.
+![Flowchart Screenshot](https://res.cloudinary.com/dpown64xj/image/upload/v1754303871/mbelfiarchinew_atfeax.png)
+At its core, Hyperlane enables arbitrary message passing between blockchains via on-chain Mailbox contracts. Mbel Finance uses this to send encoded lending-related data like position information or user actions across chains for processing or finalization.
+
+When a user interacts with the lending protocol (for example, initiating a deposit), a smart contract on the origin chain (Etherlink) uses the Mailbox contract to dispatch a message. This message contains the necessary information about the user action and is emitted as an event on-chain.
+
+A Relayer service monitors these Mailbox contracts and picks up the emitted messages. The Relayer then delivers the message to the destination chain (e.g., Arbitrum Sepolia), where another Mailbox contract receives it.
+
+On the destination chain, Mbel has deployed a settlement or verification smart contract that consumes the message. But before it is executed, the message is verified by an Interchain Security Module (ISM) a plug-and-play component in Hyperlane that validates the authenticity and origin of the message.
+
+Once verified, the message is processed by the target contract, updating balances, recording settlement, or taking another action, depending on the payload.
+
+## Components Used
+- Mailbox Contracts
+Deployed by Hyperlane on all chains. These contracts provide the interface for sending and receiving interchain messages.
+
+- Relayer
+A service that listens to Mailbox dispatch events on the source chain and delivers them to the Mailbox on the destination chain. This can be run by anyone, including Mbel Finance operators or independent relayers.
+
+- Interchain Security Module (ISM)
+Each application using Hyperlane can define a custom ISM. In Mbel Finance, ISMs verify that messages are valid and not spoofed, before allowing the target contract to process them. 
+
+- Sender Contract
+A smart contract on Etherlink that interacts with the Mailbox to send encoded lending-related data such as position ID, amount, or user address.
+
+- Receiver Contract
+A contract on Arbitrum Sepolia that consumes the verified message and updates the protocol’s internal state accordingly.
+
+## Why Hyperlane for Mbel Finance?
+Mbel Finance chose Hyperlane because it aligns with Mbel Finance’s permissionless and modular design principles:
+
+- Permissionless Deployment: Mbel Finance doesn’t need approval to use Hyperlane. Any developer can deploy Mailbox contracts and integrate them.
+
+- Customizable Security: With modular ISMs, Mbel can define different trust models per message type or chain pair.
+
+- Efficient Cross-Chain Messaging: By removing the need for centralized bridges, Mbel Finance achieves fast, secure, and cost-effective interoperability.
+
+- This architecture ensures that lending activity on Mbel Finance remains decentralized and composable across chains while minimizing operational risk.
 
 ---
 
-## Swap
-![Swap Screenshot](https://github.com/ahmadstiff/embacon-finance/blob/master/embacon-fe/public/embaconswap.png)
-Embacon Finance incorporates a purpose-built collateral swap mechanism that enables users to modify their collateral composition directly within the protocol without exiting lending or borrowing positions. Inspired by the architecture of Automated Market Makers (AMM), the system is tightly integrated into the Embacon Pool to facilitate real-time, on-chain token exchange with minimal friction.
+## Swap Collateral
+![Swap Screenshot](https://res.cloudinary.com/dpown64xj/image/upload/v1754304092/mbelfiswapcolarchi_f8qsop.jpg)
+Mbel Finance incorporates a purpose-built collateral swap mechanism that enables users to modify their collateral composition directly within the protocol without exiting lending or borrowing positions. Inspired by the architecture of Automated Market Makers (AMM), the system is tightly integrated into the Mbel Finance Pool to facilitate real-time, on-chain token exchange with minimal friction.
 
 ## 1. Liquidity Provision and Pool Structure
-Liquidity Providers (LPs) contribute token pairs such as Token A and Token B into the Embacon Pool, which serves as the central liquidity reserve for swap operations. In return, LPs receive Pool Tokens, representing their proportional ownership and entitling them to a share of the accrued transaction fees from swaps.
 
-The Embacon Pool maintains segregated reserves for each token and continuously adjusts these balances as swaps are executed.
+Liquidity Providers (LPs) contribute token pairs such as Token A and Token B into the Mbel Finance Pool, which serves as the central liquidity reserve for swap operations. In return, LPs receive Pool Tokens, representing their proportional ownership and entitling them to a share of the accrued transaction fees from swaps.
 
-## 2. Swap Execution
+The Mbel Finance Pool maintains segregated reserves for each token and continuously adjusts these balances as swaps are executed.
+
+## 2. Liquidity Provision and Pool Structure
+
 Only users with active lending or borrowing positions are permitted to access the swap functionality. This requirement ensures that all swap operations are tied directly to collateral management, thereby improving capital efficiency and reducing unnecessary speculative activity.
 
-When a user initiates a swap, such as swapping Token A for Token B, the swap logic references current reserve ratios and applies an AMM pricing formula (e.g., constant product model) to calculate the output amount. The system also integrates with Chainlink Data Streams to fetch real-time price references, ensuring fair execution and slippage protection.
+When a user initiates a swap such as swapping Token A for Token B the swap logic references current reserve ratios and applies an AMM pricing formula (e.g., constant product model) to calculate the output amount. 
 
 ## 3. Oracle Integration for Price Validation
-To maintain accurate valuation of the swapped collateral, Embacon utilizes Chainlink Oracles. These oracles deliver tamper-proof, real-time price feeds for all supported tokens, ensuring that each swap maintains alignment with market value. This is critical for maintaining healthy collateralization ratios and reducing systemic risk across lending positions.
+
+To maintain accurate valuation of the swapped collateral, Mbel Finance utilizes RedStone Oracles. These oracles deliver tamper-proof, real-time price feeds for all supported tokens, ensuring that each swap maintains alignment with market value. This is critical for maintaining healthy collateralization ratios and reducing systemic risk across lending positions.
 
 ## 4. Incentivization through Fees
+
 Each swap transaction incurs a small liquidity fee, which is distributed among active LPs based on their share of the pool. This fee structure incentivizes continued liquidity provision and supports the long-term sustainability of the swap module.
 
 ---
 
-Chainlink Integrations in Embacon Finance
-Embacon Finance leverages industry-leading oracle infrastructure from Chainlink to enable secure, real-time, and trust-minimized cross-chain lending. Two core Chainlink services, CCIP (Cross-Chain Interoperability Protocol) and Data Streams, form the foundation of Embacon’s decentralized architecture.
-1. Chainlink CCIP: Secure Cross-Chain Messaging
-To support native cross-chain lending and borrowing, Embacon integrates Chainlink CCIP, a generalized interoperability protocol that enables smart contracts on different chains to securely communicate and transfer data
-When a user deposits collateral on a source chain (e.g., Avalanche Fuji) and initiates a borrow on a destination chain (e.g., Arbitrum Sepolia), CCIP executes a burn-and-mint mechanism. The token is burned on the origin chain, and a CCIP Router relays a cryptographically verifiable message to the destination chain. Upon verification, equivalent value is minted or registered, enabling the borrow transaction without reliance on centralized bridges or wrapped assets.
-3. Chainlink Data Streams: Real-Time Price Feeds
-In addition to cross-chain messaging, Embacon uses Chainlink Data Streams to power its real-time pricing and risk assessment infrastructure. Data Streams provide high-frequency, low-latency market data sourced from multiple institutional-grade providers and updated directly on-chain.
-This integration enables Embacon to:
-
-Monitor collateral valuation with sub-second latency
-Perform accurate borrowing limit calculations (e.g., LTV (Loan-to-Value))
-Support collateral swap operations with live price validation
-Mitigate manipulation through multi-source aggregation
-Maintain transparency and determinism for all economic actions
-
-By combining CCIP and Data Streams, Embacon achieves a robust and composable infrastructure for permissionless lending across chains. The synergy of these technologies ensures users enjoy a seamless, secure, and real-time DeFi experience without sacrificing decentralization, speed, or integrity.
-
----
-
-# Embacon Finance Contract Token Configuration
+# Mbel Finance Contract Address
 ## Supported Chains
 
-- **Ethereum Sepolia**
-  - **Chain ID**: 11155111
+- **Etherlink Testnet**
+  - **Chain ID**: 128123
   - **Contracts**:
-    - Lending Pool: (Not yet deployed)
-    - Factory: (Not yet deployed)
-    - Position: (Not yet deployed)
-    - Block Explorer: `https://sepolia.etherscan.io`
-  - **Destination ID**: 0
-
-- **Avalanche Fuji**
-  - **Chain ID**: 43113
-  - **Contracts**:
-    - Lending Pool: `0xe10e79324c133DA09426972c9401b503a7b48186`
-    - Factory: `0x694B5A70f83062308aa60ecf12074Bc8f694612d`
-    - Position: `0x9ee9F9158b872fe812C3F2204588dfc8b0FC4Eda`
-    - Block Explorer: `https://testnet.snowtrace.io`
-  - **Destination ID**: 1
-
-- **Arbitrum Sepolia**
-  - **Chain ID**: 421614
-  - **Contracts**:
-    - Lending Pool: `0x19b0b0F7895BFf7D32b0b6f0239EB76787BC4963`
-    - Factory: `0x0128FA2b8254359A3493AC9782059F7bb3508AA4`
-    - Position: `0x1D8aF8e5925397a4977734b4CeeA4bA1F526E69C`
-    - Block Explorer: `https://sepolia.arbiscan.io`
-  - **Destination ID**: 2
-
-- **Base Sepolia**
-  - **Chain ID**: 84532
-  - **Contracts**:
-    - Lending Pool: (Not yet deployed)
-    - Factory: (Not yet deployed)
-    - Position: (Not yet deployed)
-    - Block Explorer: `https://sepolia.basescan.org`
-  - **Destination ID**: 3
+    - protocol: 0x4d7AfBf8f6d093ca49E9F6fB321483Fa6F68A64b
+    - isHealthy: 0x20fb77D94bbE2efee76FC0321EA3290204a4bB7B
+    - lendingPoolDeployer: 0x15b469dA6a57f8E67EE3fdA0CCd3699e159DeeE9
+    - lendingPoolFactory: 0x86CA4a34eB2C11F7406220E402cc689bb811C0CD
+    - lendingPool: 0xb4F8A55030a9e2b3B52d6267223915846eB2d3EC
+    - position: 0x8A1c8f849f0C109bAE01A3d57264d453D23d6329
+    - Block Explorer: `https://testnet.explorer.etherlink.com`
 
 ## Supported Tokens
 
 - **WETH**
   - **Addresses**:
-    - Ethereum Sepolia (11155111): `0x89d3acb10fc9f9bee444c05e1363e514e8a748da`
-    - Avalanche Fuji (43113): `0x63CFd5c58332c38d89B231feDB5922f5817DF180`
-    - Arbitrum Sepolia (421614): `0xCC1A31502Bd096d7AAdEBE25670ebe634671aD31`
-    - Base Sepolia (84532): `0x2769a1ce97cc2d21e3723ee986b29173de3fe4ac`
-  - **Price Feeds**:
-    - Ethereum Sepolia (11155111): `0x86d67c3D38D2bCeE722E601025C25a575021c6EA`
-    - Avalanche Fuji (43113): `0x86d67c3D38D2bCeE722E601025C25a575021c6EA`
-    - Arbitrum Sepolia (421614): `0xd30e2101a97dcbAeBCBC04F14C3f624E67A35165`
-    - Base Sepolia (84532): `0x86d67c3D38D2bCeE722E601025C25a575021c6EA`
+    - Etherlink Testnet (128123): `0x0355360B7F943974404277936a5C7536B51B9A77`
+    - Arbitrum Sepolia (421614): `0x9eCee5E6a7D23703Ae46bEA8c293Fa63954E8525`
+    - Base Sepolia (84532): `0x9A2Da2FA519AFCcCc6B33CA48dFa07fE3a9887eF`
 
 - **WBTC**
   - **Addresses**:
-    - Ethereum Sepolia (11155111): `0xbe4d4858eb0849b038a0b5ecd38a7599d73bd923`
-    - Avalanche Fuji (43113): `0xa7A93C5F0691a5582BAB12C0dE7081C499aECE7f`
-    - Arbitrum Sepolia (421614): `0x773D46F1Ad10110459D84535A664B59Ae98CAC7E`
-    - Base Sepolia (84532): `0x548c22d340eb79915316f01e45b4133203a24e90`
-  - **Price Feeds**:
-    - Ethereum Sepolia (11155111): `0x86d67c3D38D2bCeE722E601025C25a575021c6EA`
-    - Avalanche Fuji (43113): `0x86d67c3D38D2bCeE722E601025C25a575021c6EA`
-    - Arbitrum Sepolia (421614): `0x56a43EB56Da12C0dc1D972ACb089c06a5dEF8e69`
-    - Base Sepolia (84532): `0x86d67c3D38D2bCeE722E601025C25a575021c6EA`
-
-- **WAVAX**
-  - **Addresses**:
-    - Ethereum Sepolia (11155111): `0x4314bb3ad93206ee8f7f18dbcc49943366503bbf`
-    - Avalanche Fuji (43113): `0xA61Eb0D33B5d69DC0D0CE25058785796296b1FBd`
-    - Arbitrum Sepolia (421614): `0x9b9d709ACAB5c4C784a7ADce5530ce8b98FcD662`
-    - Base Sepolia (84532): `0x322b3326b5f7de4abd7554f6a32217825770fd41`
-  - **Price Feeds**:
-    - Ethereum Sepolia (11155111): `0x86d67c3D38D2bCeE722E601025C25a575021c6EA`
-    - Avalanche Fuji (43113): `0x86d67c3D38D2bCeE722E601025C25a575021c6EA`
-    - Arbitrum Sepolia (421614): `0xe27498c9Cc8541033F265E63c8C29A97CfF9aC6D`
-    - Base Sepolia (84532): `0x86d67c3D38D2bCeE722E601025C25a575021c6EA`
+    - Etherlink Testnet (128123): `0x50df5e25AB60e150f753B9444D160a80f0279559`
+    - Arbitrum Sepolia (421614): `0xa998cBD0798F827a5Ed40A5c461E5052c06ff7C6`
+    - Base Sepolia (84532): `0x11603bf689910b9312bd0915749095C12cc92ac1`
 
 - **USDC**
   - **Addresses**:
-    - Ethereum Sepolia (11155111): `0xab0c196dba12297e4c5b9a414013230a527b4a4b`
-    - Avalanche Fuji (43113): `0xC014F158EbADce5a8e31f634c0eb062Ce8CDaeFe`
-    - Arbitrum Sepolia (421614): `0xEB7262b444F450178D25A5690F49bE8E2Fe5A178`
-    - Base Sepolia (84532): `0xcba01c75d035ca98ffc7710dae710435ca53c03c`
-  - **Price Feeds**:
-    - Ethereum Sepolia (11155111): `0x86d67c3D38D2bCeE722E601025C25a575021c6EA`
-    - Avalanche Fuji (43113): `0x86d67c3D38D2bCeE722E601025C25a575021c6EA`
-    - Arbitrum Sepolia (421614): `0x0153002d20B96532C639313c2d54c3dA09109309`
-    - Base Sepolia (84532): `0x86d67c3D38D2bCeE722E601025C25a575021c6EA`
+    - Etherlink Testnet (128123): `0xB8DB4FcdD486a031a3B2CA27B588C015CB99F5F0`
+    - Arbitrum Sepolia (421614): `0x93Abc28490836C3f50eF44ee7B300E62f4bda8ab`
+    - Base Sepolia (84532): `0xdfd290562Ce8aB4A4CCBfF3FC459D504a628f8eD`
 
 - **USDT**
   - **Addresses**:
-    - Ethereum Sepolia (11155111): `0xe8add858b8a2f6e41d67008a58058010b9c0ba04`
-    - Avalanche Fuji (43113): `0x1E713E704336094585c3e8228d5A8d82684e4Fb0`
-    - Arbitrum Sepolia (421614): `0x02d811A7959994e4861781bC65c58813D4678949`
-    - Base Sepolia (84532): `0x49f82b20894e6a1e66238fb50278ac60b57676ee`
-  - **Price Feeds**:
-    - Ethereum Sepolia (11155111): `0x86d67c3D38D2bCeE722E601025C25a575021c6EA`
-    - Avalanche Fuji (43113): `0x86d67c3D38D2bCeE722E601025C25a575021c6EA`
-    - Arbitrum Sepolia (421614): `0x80EDee6f667eCc9f63a0a6f55578F870651f06A4`
-    - Base Sepolia (84532): `0x86d67c3D38D2bCeE722E601025C25a575021c6EA`
+    - Etherlink Testnet (128123): `0x2761372682FE39A53A5b1576467a66b258C3fec2`
+    - Arbitrum Sepolia (421614): `0x8B34f890d496Ff9FCdcDb113d3d464Ee54c35623`
+    - Base Sepolia (84532): `0xF597525130e6295CFA0C75EA968FBf89D486c528`
 
-## Integration with Embacon Finance
-
-These tokens are used for cross-chain lending, borrowing, and collateral swaps on testnet chains (Ethereum Sepolia, Avalanche Fuji, Arbitrum Sepolia, Base Sepolia). Chainlink price feeds ensure accurate, real-time valuation for collateral management, LTV calculations, and swaps, enabling a secure and efficient cross-chain DeFi ecosystem.
+- **WXTZ**
+  - **Addresses**:
+    - Etherlink Testnet (128123): `0x0320aC8A299b3da6469bE3Da9ED6c84D09309418`
+    - Arbitrum Sepolia (421614): `0x64D3ee701c5d649a8a1582f19812416c132c9700`
+    - Base Sepolia (84532): `0x10d3743F6A987082CB7B0680cA2283F5839e77CD`
 
 ## 🔗 Links
 
-- 🌐 Website: [https://embacon-fnance.vercel.app/](https://embacon-fnance.vercel.app/)
-- 🏢 Organization: [https://github.com/ahmadstiff/embacon-finance](https://github.com/ahmadstiff/embacon-finance)
-- Demo Video [https://www.youtube.com](https://www.youtube.com/watch?v=YN4QYPe-Uxg)
-
+- 🌐 Website: [https://mbelfi.vercel.app/](https://mbelfi.vercel.app/)
+- 🏢 Repo: [https://github.com/ghozzza/MbelFi](https://github.com/ghozzza/MbelFi)
+- Demo Video [https://www.youtube.com](https://youtu.be/dOilptG8U0s)
+- Documentation (Gitbook) [Mbel Finance Gitbook](https://mbel-finance.gitbook.io/mbel-finance-docs)
 ---
 
 
