@@ -108,7 +108,7 @@ const HistoryPage: React.FC = () => {
 
   const handleViewDetails = (transaction: Transaction) => {
     // You can implement a modal or navigation to detailed view
-    console.log("View details for transaction:", transaction);
+  
   };
 
   const handleLoadMore = () => {

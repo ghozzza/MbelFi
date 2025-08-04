@@ -273,13 +273,6 @@ export function RepayDialog({
       
       // Calculate conversion from borrow token to input token for display
       if (value && Number(value) > 0) {
-        console.log("🔄 Borrow Token Change:", {
-          value,
-          baseRate,
-          borrowToInputRate,
-          inputToken: inputToken?.symbol,
-          borrowToken: borrowToken?.symbol
-        });
         
         // Use base rate for conversion to input token (for display only)
         if (baseRate > 0) {
