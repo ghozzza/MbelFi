@@ -199,7 +199,7 @@ Each swap transaction incurs a small liquidity fee, which is distributed among a
 ---
 
 # Mbel Finance Contract Address
-## Supported Chains
+## Protocol Addresses
 
 - **Etherlink Testnet**
   - **Chain ID**: 128123
