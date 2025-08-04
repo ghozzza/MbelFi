@@ -30,6 +30,6 @@ contract HelperUtilsScript is Script {
 //   --rpc-url https://node.ghostnet.etherlink.com \
 //   --verifier blockscout \
 //   --verifier-url 'https://testnet.explorer.etherlink.com/api/' \
-//   0x4eB5359245A1B4436757E74aE1B8a7c645f90c2e \
+//   0x1788042Ef20a790c27758255159D7E815A755320 \
 //   src/hyperlane/HelperUtils.sol:HelperUtils
 }

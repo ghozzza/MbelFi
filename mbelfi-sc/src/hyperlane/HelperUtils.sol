@@ -68,12 +68,12 @@ contract HelperUtils {
         return uint256(tokenPrice);
     }
 
-    function getHealthFactor(address _lendingPool) public view returns (uint256) {
+    function getHealthFactor(address _lendingPool, address _user) public view returns (uint256) {
         ILendingPool lendingPool = ILendingPool(_lendingPool);
 
         // Get user's position and borrow data
-        address userPosition = lendingPool.addressPositions(msg.sender);
-        uint256 userBorrowShares = lendingPool.userBorrowShares(msg.sender);
+        address userPosition = lendingPool.addressPositions(_user);
+        uint256 userBorrowShares = lendingPool.userBorrowShares(_user);
         uint256 totalBorrowAssets = lendingPool.totalBorrowAssets();
         uint256 totalBorrowShares = lendingPool.totalBorrowShares();
         address borrowToken = lendingPool.borrowToken();
