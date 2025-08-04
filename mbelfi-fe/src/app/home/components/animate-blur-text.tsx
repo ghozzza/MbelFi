@@ -8,7 +8,7 @@ function AnimateBlurText() {
   const router = useRouter();
 
   const handleGetStarted = () => {
-    router.push("/home");
+    router.push("/dashboard");
   };
 
   return (
