@@ -36,7 +36,7 @@ const DocsRedirectPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/20 to-purple-900/20 flex items-center justify-center relative overflow-hidden">
+    <div className="min-h-screen  flex items-center justify-center relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0">
         <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
@@ -57,7 +57,7 @@ const DocsRedirectPage: React.FC = () => {
           </div>
           
           {/* Ripple effect */}
-          <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500/20 to-purple-600/20 transition-all duration-1000 ${
+          <div className={`absolute inset-0 rounded-2xl  transition-all duration-1000 ${
             animationPhase >= 2 ? 'scale-150 opacity-0' : 'scale-100 opacity-100'
           }`}></div>
         </div>
