@@ -248,7 +248,7 @@ Each swap transaction incurs a small liquidity fee, which is distributed among a
 
 - 🌐 Website: [https://mbelfi.vercel.app/](https://mbelfi.vercel.app/)
 - 🏢 Repo: [https://github.com/ghozzza/MbelFi](https://github.com/ghozzza/MbelFi)
-- Demo Video [https://www.youtube.com](https://youtu.be/dOilptG8U0s)
+- Demo Video [https://youtu.be/dOilptG8U0s](https://youtu.be/dOilptG8U0s)
 - Documentation (Gitbook) [Mbel Finance Gitbook](https://mbel-finance.gitbook.io/mbel-finance-docs)
 ---
 
